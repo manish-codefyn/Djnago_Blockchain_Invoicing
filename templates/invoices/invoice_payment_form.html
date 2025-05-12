@@ -1,0 +1,52 @@
+{% extends 'base_dash.html' %}
+{% load static crispy_forms_tags %}
+{% block title %}Add Payment for Invoice #{{ invoice.invoice_number }}{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h3>Add Payment for Invoice #{{ invoice.invoice_number }}</h3>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label">Invoice Total</label>
+                    <input type="text" class="form-control" value="{{ invoice.formatted_total }}" readonly>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Amount Paid</label>
+                    <input type="text" class="form-control" value="{{ invoice.total_paid }}" readonly>
+                </div>
+            </div>
+            
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    {{ form.amount|as_crispy_field }}
+                </div>
+                <div class="col-md-6">
+                    {{ form.payment_date|as_crispy_field }}
+                </div>
+            </div>
+            
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    {{ form.payment_method|as_crispy_field }}
+                </div>
+                <div class="col-md-6">
+                    {{ form.transaction_id|as_crispy_field }}
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                {{ form.notes|as_crispy_field }}
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Add Payment</button>
+            <a href="{% url 'invoices:invoice-detail' invoice.id %}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

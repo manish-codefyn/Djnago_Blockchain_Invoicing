@@ -1,0 +1,244 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}Dashboard -{{site_name}} {% endblock %}
+
+{% block content %}
+
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h2>Welcome back, {{ user.username }}!</h2>
+        <p class="lead">Here's what's happening with your email campaigns.</p>
+        
+        <!-- Quick Stats Row -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-4">
+                <div class="card ">
+                    <div class="card-body">
+                        <h6 class="text-muted">Open Rate</h6>
+                        <h3 class="mb-0">{{ average_open_rate }}%</h3>
+                        <span class="text-success small">
+                            <i class="bi bi-arrow-up"></i> 2.5% from last month
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-success shadow-sm">
+                    <div class="card-body ">
+                        <h6 class="text-muted">Click Rate</h6>
+                        <h3 class="mb-0">{{ average_click_rate }}%</h3>
+                        <span class="text-success small">
+                            <i class="bi bi-arrow-up"></i> 1.2% from last month
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-info ">
+                    <div class="card-body">
+                        <h6 class="text-muted">Subscriber Growth</h6>
+                        <h3 class="mb-0">{{ subscriber_growth }}%</h3>
+                        <span class="text-success small">
+                            <i class="bi bi-arrow-up"></i> Last 30 days
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                Quick Actions
+            </div>
+            <div class="card-body">
+                <a href="{% url 'campaign:campaign_create' %}" class="btn btn-primary mb-2 w-100">
+                    <i class="bi bi-envelope-plus me-2"></i>Create Campaign
+                </a>
+                <a href="{% url 'subscriber:subscriber_create' %}" class="btn btn-success mb-2 w-100">
+                    <i class="bi bi-person-plus me-2"></i>Add Subscriber
+                </a>
+                <a href="{% url 'subscriber:subscriberlist_create' %}" class="btn btn-info w-100">
+                    <i class="bi bi-collection me-2"></i>Create List
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Recent Campaigns -->
+    <div class="col-lg-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center bg-primary text-white">
+                <h5 class="mb-0">Recent Campaigns</h5>
+                <a href="{% url 'campaign:campaign_list' %}" class="btn btn-sm btn-light">View All</a>
+            </div>
+            <div class="card-body">
+                {% if campaigns %}
+                <div class="list-group list-group-flush">
+                    {% for campaign in campaigns %}
+                    <div class="list-group-item">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="mb-1">
+                                    <a href="{% url 'campaign:campaign_detail' campaign.pk %}" class="text-decoration-none">
+                                        {{ campaign.name }}
+                                    </a>
+                                </h6>
+                                <small class="text-muted">{{ campaign.subject }}</small>
+                            </div>
+                            <div class="text-end">
+                                <span class="badge {% if campaign.sent_at %}bg-success{% elif campaign.is_active %}bg-primary{% else %}bg-secondary{% endif %}">
+                                    {% if campaign.sent_at %}Sent{% elif campaign.is_active %}Draft{% else %}Inactive{% endif %}
+                                </span>
+                                <div class="text-muted small mt-1">
+                                    {{ campaign.created_at|naturalday }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="bi bi-envelope-x display-6 text-muted mb-3"></i>
+                    <p class="lead">No campaigns yet</p>
+                    <a href="{% url 'campaign:campaign_create' %}" class="btn btn-primary">
+                        Create Your First Campaign
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Subscriber Stats -->
+    <div class="col-lg-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center bg-success text-white">
+                <h5 class="mb-0">Subscriber Overview</h5>
+                <a href="{% url 'subscriber:subscriber_list' %}" class="btn btn-sm btn-light">Manage</a>
+            </div>
+            <div class="card-body">
+                <div class="row text-center mb-3">
+                    <div class="col-md-6 mb-3">
+                        <div class="card border-success">
+                            <div class="card-body">
+                                <h2 class="display-5">{{ total_subscribers|intcomma }}</h2>
+                                <p class="mb-0 text-muted">Total Subscribers</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="card border-primary">
+                            <div class="card-body">
+                                <h2 class="display-5">{{ active_subscribers|intcomma }}</h2>
+                                <p class="mb-0 text-muted">Active Subscribers</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <h5 class="mb-3">Recent Signups</h5>
+                {% if recent_subscribers %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Email</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for sub in recent_subscribers|slice:":5" %}
+                            <tr>
+                                <td>{{ sub.email|truncatechars:25 }}</td>
+                                <td>{{ sub.subscribed_at|date:"M d" }}</td>
+                                <td>
+                                    <span class="badge {% if sub.is_active %}bg-success{% else %}bg-secondary{% endif %}">
+                                        {% if sub.is_active %}Active{% else %}Inactive{% endif %}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="bi bi-people display-6 text-muted mb-3"></i>
+                    <p class="lead">No subscribers yet</p>
+                    <a href="{% url 'subscriber:subscriber_create' %}" class="btn btn-success">
+                        Add Your First Subscriber
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Campaign Performance -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center bg-info text-white">
+                <h5 class="mb-0">Campaign Performance</h5>
+                {% if top_performing_campaign %}
+                <a href="{% url 'campaign:campaign_detail' top_performing_campaign.pk %}" class="btn btn-sm btn-light">
+                    View Top Campaign
+                </a>
+                {% endif %}
+            </div>
+            <div class="card-body">
+                {% if top_performing_campaign %}
+                <div class="row align-items-center">
+                    <div class="col-md-4 text-center">
+                        <div class="display-4 text-info mb-2">
+                            {{ average_open_rate }}%
+                        </div>
+                        <p class="text-muted">Average Open Rate</p>
+                        <div class="progress mt-3" style="height: 10px;">
+                            <div class="progress-bar bg-info" role="progressbar" 
+                                 style="width: {{ average_open_rate }}%" 
+                                 aria-valuenow="{{ average_open_rate }}" 
+                                 aria-valuemin="0" 
+                                 aria-valuemax="100"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <h5>Top Performing Campaign</h5>
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body">
+                                <h6>{{ top_performing_campaign.name }}</h6>
+                                <p class="text-muted mb-2">{{ top_performing_campaign.subject }}</p>
+                                <div class="d-flex justify-content-between">
+                                    <span class="text-muted small">
+                                        Sent: {{ top_performing_campaign.sent_at|date:"M d, Y" }}
+                                    </span>
+                                    <span class="badge bg-info">
+                                        Open Rate: 45.6%
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="bi bi-graph-up display-6 text-muted mb-3"></i>
+                    <p class="lead">No campaign data available</p>
+                    <p class="text-muted">Send your first campaign to see performance metrics</p>
+                    <a href="{% url 'campaign:campaign_create' %}" class="btn btn-info">
+                        Create a Campaign
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

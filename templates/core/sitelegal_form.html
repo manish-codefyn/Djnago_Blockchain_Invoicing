@@ -1,0 +1,29 @@
+{% extends "base_dash.html" %}
+{% load crispy_forms_tags static %}
+{% block title %}Site Legal Settings - {{ site_name }}{% endblock %}
+
+{% block content %}
+<div class=" py-5">
+    <h2 class="mb-4">Create Legal Content</h2>
+    
+ 
+    <form method="post" class="bg-light p-4 rounded shadow-sm">
+        {% csrf_token %}
+      
+        <div class="mb-3">
+           
+            {{ form.terms_of_service|as_crispy_field }}
+        </div>
+        
+        <div class="mb-3">
+           
+            {{ form.privacy_policy|as_crispy_field }}
+        </div>
+
+        <div class="d-flex justify-content-between">
+            <button type="submit" class="btn btn-primary">Create</button>
+            <a href="{% url 'core:settings' %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

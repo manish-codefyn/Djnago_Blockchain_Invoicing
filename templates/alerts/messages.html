@@ -1,0 +1,28 @@
+
+
+{% if messages %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        {% for message in messages %}
+            Swal.fire({
+                icon: '{% if "error" in message.tags %}error{% elif "success" in message.tags %}success{% elif "warning" in message.tags %}warning{% else %}info{% endif %}',
+                title: '{{ message|escapejs }}',
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 4000,
+                timerProgressBar: true,
+            });
+        {% endfor %}
+    });
+</script>
+{% endif %}
+
+{% if messages %}
+{% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+{% endfor %}
+{% endif %}

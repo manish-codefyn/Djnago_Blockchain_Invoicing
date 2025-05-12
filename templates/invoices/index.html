@@ -1,0 +1,222 @@
+{% extends "base_dash.html" %}
+
+{% block home_content %}
+<!-- Hero Section -->
+<section class="hero-section bg-primary text-white py-5">
+    <div class="container py-5">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-5 mb-lg-0">
+                <h1 class="display-4 fw-bold mb-4">Professional Invoicing Made Simple</h1>
+                <p class="lead mb-4">Create, send, and track invoices with our blockchain-powered platform. Get paid faster with secure, tamper-proof transactions.</p>
+                <div class="d-flex gap-3">
+                    <a href="{% url 'signup' %}" class="btn btn-light btn-lg px-4">Get Started Free</a>
+                    <a href="#features" class="btn btn-outline-light btn-lg px-4">Learn More</a>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <img src="{% static 'images/hero-invoice.png' %}" alt="Invoice Dashboard" class="img-fluid rounded shadow-lg">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section id="features" class="py-5 bg-light">
+    <div class="container py-5">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold">Powerful Features</h2>
+            <p class="lead text-muted">Everything you need to manage your invoicing workflow</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="bg-primary bg-opacity-10 text-primary rounded-circle p-3 d-inline-block mb-3">
+                            <i class="bi bi-lightning-charge fs-2"></i>
+                        </div>
+                        <h4 class="mb-3">Quick Invoicing</h4>
+                        <p class="text-muted">Create professional invoices in minutes with our intuitive interface and customizable templates.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="bg-success bg-opacity-10 text-success rounded-circle p-3 d-inline-block mb-3">
+                            <i class="bi bi-shield-lock fs-2"></i>
+                        </div>
+                        <h4 class="mb-3">Blockchain Security</h4>
+                        <p class="text-muted">Every paid invoice is recorded on the blockchain for immutable proof of payment and transaction history.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="bg-info bg-opacity-10 text-info rounded-circle p-3 d-inline-block mb-3">
+                            <i class="bi bi-graph-up fs-2"></i>
+                        </div>
+                        <h4 class="mb-3">Real-time Analytics</h4>
+                        <p class="text-muted">Track your revenue, outstanding payments, and client activity with comprehensive dashboards.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="bg-warning bg-opacity-10 text-warning rounded-circle p-3 d-inline-block mb-3">
+                            <i class="bi bi-envelope-paper fs-2"></i>
+                        </div>
+                        <h4 class="mb-3">Automated Reminders</h4>
+                        <p class="text-muted">Set up automatic payment reminders to reduce late payments and improve cash flow.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="bg-danger bg-opacity-10 text-danger rounded-circle p-3 d-inline-block mb-3">
+                            <i class="bi bi-currency-exchange fs-2"></i>
+                        </div>
+                        <h4 class="mb-3">Multi-Currency</h4>
+                        <p class="text-muted">Create invoices in any currency and get paid globally with automatic exchange rate calculations.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="bg-purple bg-opacity-10 text-purple rounded-circle p-3 d-inline-block mb-3">
+                            <i class="bi bi-phone fs-2"></i>
+                        </div>
+                        <h4 class="mb-3">Mobile Friendly</h4>
+                        <p class="text-muted">Access your invoices and reports from anywhere with our fully responsive web application.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works -->
+<section class="py-5">
+    <div class="container py-5">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-5 mb-lg-0">
+                <img src="{% static 'images/how-it-works.png' %}" alt="How It Works" class="img-fluid rounded shadow">
+            </div>
+            <div class="col-lg-6">
+                <h2 class="fw-bold mb-4">How It Works</h2>
+                
+                <div class="d-flex mb-4">
+                    <div class="flex-shrink-0 me-4">
+                        <div class="bg-primary text-white rounded-circle p-3" style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;">
+                            <span class="fs-4 fw-bold">1</span>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h4 class="mb-2">Create Your Invoice</h4>
+                        <p class="text-muted mb-0">Fill in your client details, add items, set payment terms, and customize the design to match your brand.</p>
+                    </div>
+                </div>
+                
+                <div class="d-flex mb-4">
+                    <div class="flex-shrink-0 me-4">
+                        <div class="bg-success text-white rounded-circle p-3" style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;">
+                            <span class="fs-4 fw-bold">2</span>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h4 class="mb-2">Send to Your Client</h4>
+                        <p class="text-muted mb-0">Email the invoice directly from our platform or download as PDF. Your client receives a professional, easy-to-pay invoice.</p>
+                    </div>
+                </div>
+                
+                <div class="d-flex">
+                    <div class="flex-shrink-0 me-4">
+                        <div class="bg-info text-white rounded-circle p-3" style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;">
+                            <span class="fs-4 fw-bold">3</span>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h4 class="mb-2">Get Paid Securely</h4>
+                        <p class="text-muted mb-0">When payment is received, the transaction is recorded on the blockchain for permanent verification.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials -->
+<section class="py-5 bg-light">
+    <div class="container py-5">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold">What Our Customers Say</h2>
+            <p class="lead text-muted">Trusted by businesses worldwide</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="{% static 'images/avatar1.jpg' %}" class="rounded-circle me-3" width="50" height="50" alt="Sarah Johnson">
+                            <div>
+                                <h5 class="mb-0">Sarah Johnson</h5>
+                                <small class="text-muted">Freelance Designer</small>
+                            </div>
+                        </div>
+                        <p class="mb-0">"InvoicePro has saved me so much time! I can create and send professional invoices in minutes, and the blockchain feature gives me peace of mind."</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="{% static 'images/avatar2.jpg' %}" class="rounded-circle me-3" width="50" height="50" alt="Michael Chen">
+                            <div>
+                                <h5 class="mb-0">Michael Chen</h5>
+                                <small class="text-muted">Small Business Owner</small>
+                            </div>
+                        </div>
+                        <p class="mb-0">"The automated reminders have reduced my late payments by 80%. The dashboard gives me a clear picture of my cash flow at a glance."</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="{% static 'images/avatar3.jpg' %}" class="rounded-circle me-3" width="50" height="50" alt="Emma Rodriguez">
+                            <div>
+                                <h5 class="mb-0">Emma Rodriguez</h5>
+                                <small class="text-muted">Consultant</small>
+                            </div>
+                        </div>
+                        <p class="mb-0">"I love how I can access my invoices from anywhere. The mobile experience is flawless, and my clients appreciate the professional look."</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-5 bg-primary text-white">
+    <div class="container py-5 text-center">
+        <h2 class="fw-bold mb-4">Ready to Simplify Your Invoicing?</h2>
+        <p class="lead mb-5">Join thousands of businesses already using InvoicePro to get paid faster and smarter.</p>
+        <a href="{% url 'signup' %}" class="btn btn-light btn-lg px-5 py-3 fw-bold">Start Your Free Trial</a>
+    </div>
+</section>
+{% endblock %}

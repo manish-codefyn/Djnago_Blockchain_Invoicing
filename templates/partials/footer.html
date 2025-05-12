@@ -1,0 +1,42 @@
+<footer class="footer-overlay text-white pt-5 pb-3">
+    <div class="container">
+        <div class="row gy-4">
+            <div class="col-md-4">
+                <h5 class="brand-title">
+                    <img src="{{ logo_url }}" alt="{{ site_name }}" style="height: 30px;" class="me-2">
+                    {{ site_name }}<span class="text-accent">Pro</span>
+                </h5>
+                <p class="small text-white">{{ description }}</p>
+            </div>
+            <div class="col-md-2">
+                <h6 class="text-uppercase mb-3">Quick Links</h6>
+                <ul class="list-unstyled">
+                    <li><a href="{% url 'core:home' %}" class="footer-link">Home</a></li>
+                    <li><a href="#" class="footer-link">Features</a></li>
+                    <li><a href="#" class="footer-link">Pricing</a></li>
+                    <li><a href="#" class="footer-link">Contact</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3">
+                <h6 class="text-uppercase mb-3">Follow Us</h6>
+                <div class="d-flex gap-3">
+                    {% if facebook %}<a href="{{ facebook }}" class="social-icon"><i class="fab fa-facebook-f"></i></a>{% endif %}
+                    {% if twitter %}<a href="{{ twitter }}" class="social-icon"><i class="fab fa-twitter"></i></a>{% endif %}
+                    {% if linkedin %}<a href="{{ linkedin }}" class="social-icon"><i class="fab fa-linkedin-in"></i></a>{% endif %}
+                    {% if instagram %}<a href="{{ instagram }}" class="social-icon"><i class="fab fa-instagram"></i></a>{% endif %}
+                    {% if youtube %}<a href="{{ youtube }}" class="social-icon"><i class="fab fa-youtube"></i></a>{% endif %}
+                </div>
+            </div>
+            <div class="col-md-3 text-md-end text-start">
+                <h6 class="text-uppercase mb-3">Contact</h6>
+                <p class="small text-white mb-0">Email: {{ email }}</p>
+                <p class="small text-white mb-0">Phone: {{ mobile }}</p>
+                <p class="small text-white">{{ address }}</p>
+            </div>
+        </div>
+        <hr class="border-top border-light mt-4 mb-2">
+        <div class="text-center small text-white">
+            &copy; {{ current_year }} {{ site_name }}. All rights reserved.
+        </div>
+    </div>
+</footer>

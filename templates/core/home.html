@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags static %}
+{% block title %} Blockchain Invoicing Homepage - {{site_name}}{% endblock %}
+
+{% block extra_head %}
+
+{% endblock %}
+
+{% block content %}
+<main class="bg-dark-gradient text-white min-vh-100">
+  <!-- Hero Section -->
+  <section class="py-5 text-center position-relative overflow-hidden">
+    <div class="container py-5 position-relative z-index-1">
+      <div class="row justify-content-center">
+        <div class="col-lg-8" data-aos="fade-up" data-aos-duration="800">
+          <h1 class="display-4 fw-bold mb-4">
+            <span class="text-gradient">Blockchain Invoicing</span><br>Reimagined
+          </h1>
+          <p class="lead text-white mb-5">
+            Immutable, transparent invoices powered by Ethereum blockchain.<br>
+            Automate payments with smart contracts and crypto integration.
+          </p>
+          <div class="d-flex justify-content-center gap-3" data-aos="fade-up" data-aos-delay="200">
+            <a href="{% url 'account_signup' %}" class="btn btn-primary btn-lg px-4 py-3 btn-hover-grow">
+              Get Started <i class="bi bi-arrow-right ms-2"></i>
+            </a>
+            <a href="#features" class="btn btn-outline-light btn-lg px-4 py-3 btn-hover-grow">
+              Learn More <i class="bi bi-info-circle ms-2"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="position-absolute top-0 start-0 w-100 h-100 opacity-10">
+      <div class="position-absolute top-50 start-50 translate-middle" style="width: 800px; height: 800px;">
+        <div class="position-relative w-100 h-100">
+          <div class="position-absolute top-0 start-0 rounded-circle bg-primary" style="width: 300px; height: 300px; filter: blur(100px);"></div>
+          <div class="position-absolute bottom-0 end-0 rounded-circle bg-success" style="width: 300px; height: 300px; filter: blur(100px);"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Blockchain Visualization -->
+  <section class="py-5 position-relative" style="z-index: 1;">
+    <div class="container">
+      <div class="blockchain-card rounded-4 p-4" data-aos="fade-up">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <div>
+            <span class="badge bg-danger me-1 rounded-circle" style="width: 12px; height: 12px;"></span>
+            <span class="badge bg-warning me-1 rounded-circle" style="width: 12px; height: 12px;"></span>
+            <span class="badge bg-success rounded-circle" style="width: 12px; height: 12px;"></span>
+          </div>
+          <small class="text-muted">LIVE BLOCKCHAIN INTERACTION</small>
+        </div>
+        <div class="text-center py-4" data-aos="zoom-in" data-aos-delay="300">
+          <h4 class="text-success fw-bold mb-3">
+            Latest Block: <span id="block-number" class="d-inline-block">#14,562,809</span>
+          </h4>
+          <p class="text-white fst-italic">Transactions secured by Ethereum Mainnet</p>
+        </div>
+        <div class="position-absolute top-0 start-0 w-100 h-100" style="pointer-events: none; z-index: -1;">
+          <div class="position-absolute top-0 start-0 w-100 h-100" style="background: radial-gradient(circle at center, rgba(74, 222, 128, 0.1) 0%, transparent 70%);"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section id="features" class="py-5 position-relative" style="z-index: 1;">
+    <div class="container">
+      <div class="text-center mb-5" data-aos="fade-up">
+        <h2 class="fw-bold display-5 mb-3">Powerful Features</h2>
+        <p class="text-white lead">Revolutionize your invoicing with blockchain technology</p>
+      </div>
+      <div class="row g-4">
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+          <div class="feature-card card bg-dark text-white h-100 border-0 rounded-4 shadow-sm p-4">
+            <div class="card-body text-center">
+              <i class="bi bi-shield-lock fs-1 text-success mb-3"></i>
+              <h5 class="card-title fw-bold">Immutable Records</h5>
+              <p class="card-text text-white">
+                Every invoice is permanently recorded on the blockchain, providing an unforgeable audit trail.
+              </p>
+              <div class="mt-3">
+                <span class="badge bg-success bg-opacity-10 text-success">Tamper-proof</span>
+                <span class="badge bg-success bg-opacity-10 text-success ms-2">Transparent</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+          <div class="feature-card card bg-dark text-white h-100 border-0 rounded-4 shadow-sm p-4">
+            <div class="card-body text-center">
+              <i class="bi bi-cpu fs-1 text-primary mb-3"></i>
+              <h5 class="card-title fw-bold">Smart Contracts</h5>
+              <p class="card-text text-white">
+                Automated payment execution when conditions are met, eliminating late payments.
+              </p>
+              <div class="mt-3">
+                <span class="badge bg-primary bg-opacity-10 text-primary">Automated</span>
+                <span class="badge bg-primary bg-opacity-10 text-primary ms-2">Secure</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+          <div class="feature-card card bg-dark text-white h-100 border-0 rounded-4 shadow-sm p-4">
+            <div class="card-body text-center">
+              <i class="bi bi-currency-exchange fs-1 text-info mb-3"></i>
+              <h5 class="card-title fw-bold">Multi-Currency</h5>
+              <p class="card-text text-white">
+                Accept payments in ETH, BTC, stablecoins or traditional currencies with automatic conversion.
+              </p>
+              <div class="mt-3">
+                <span class="badge bg-info bg-opacity-10 text-info">Flexible</span>
+                <span class="badge bg-info bg-opacity-10 text-info ms-2">Global</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="py-5 text-center position-relative overflow-hidden">
+    <div class="container position-relative z-index-1">
+      <div class="row justify-content-center">
+        <div class="col-lg-8" data-aos="fade-up">
+          <h2 class="fw-bold display-5 mb-4">Ready to Transform Your Invoicing?</h2>
+          <p class="lead text-white mb-5">
+            Join hundreds of businesses already benefiting from blockchain-powered invoicing.
+          </p>
+          <div data-aos="zoom-in" data-aos-delay="200">
+            <a href="{% url 'account_signup' %}" class="btn btn-success btn-lg px-5 py-3 btn-hover-grow">
+              Start Free Trial <i class="bi bi-lightning-charge-fill ms-2"></i>
+            </a>
+            <p class="text-muted mt-3 small">No credit card required • Cancel anytime</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="position-absolute top-0 start-0 w-100 h-100 opacity-10">
+      <div class="position-absolute top-50 start-50 translate-middle" style="width: 800px; height: 800px;">
+        <div class="position-relative w-100 h-100">
+          <div class="position-absolute top-0 start-0 rounded-circle bg-primary" style="width: 300px; height: 300px; filter: blur(100px);"></div>
+          <div class="position-absolute bottom-0 end-0 rounded-circle bg-success" style="width: 300px; height: 300px; filter: blur(100px);"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+{% endblock %}
+
+{% block extra_js %}
+<!-- AOS Animation JS -->
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+  // Initialize AOS
+  AOS.init({
+    duration: 800,
+    easing: 'ease-in-out',
+    once: true,
+    mirror: false
+  });
+  
+  // Blockchain animation
+  document.addEventListener('DOMContentLoaded', function() {
+    // Simulate block number update
+    setInterval(function() {
+      const blockNumber = document.getElementById('block-number');
+      if (blockNumber) {
+        const current = parseInt(blockNumber.textContent.replace(/#|,/g, ''));
+        blockNumber.textContent = '#' + (current + 1).toLocaleString();
+      }
+    }, 5000);
+    
+    // Add pulse animation to CTA button
+    const ctaButton = document.querySelector('.btn-success');
+    if (ctaButton) {
+      setInterval(function() {
+        ctaButton.classList.add('pulse');
+        setTimeout(function() {
+          ctaButton.classList.remove('pulse');
+        }, 1000);
+      }, 5000);
+    }
+  });
+</script>
+{% endblock %}

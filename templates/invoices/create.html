@@ -1,0 +1,479 @@
+{% extends "base_dash.html" %}
+{% load static crispy_forms_tags %}
+
+{% block content %}
+
+    <!-- Header with gradient background -->
+    <div class="invoice-header bg-gradient-primary-to-secondary py-4 px-4">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h2 class="text-success mb-0">
+            <i class="bi bi-file-earmark-text me-2"></i>
+            {% if invoice %}Edit Invoice{% else %}New Invoice{% endif %}
+          </h2>
+        </div>
+        <a href="{% if invoice %}{% url 'invoices:invoice-detail' invoice.id %}{% else %}{% url 'invoices:invoice-list' %}{% endif %}" 
+           class="btn btn-light btn-sm rounded-pill shadow-sm">
+          <i class="bi bi-arrow-left me-1"></i> Back
+        </a>
+      </div>
+    </div>
+
+    <div class="row g-4 px-4 py-3">
+      <!-- Main Form Column -->
+      <div class="col-lg-8">
+        <div class="card shadow-sm border-0 overflow-hidden">
+          <div class="card-body p-0">
+            <form method="post" id="invoiceForm" class="needs-validation" novalidate>
+              {% csrf_token %}
+              
+              <!-- Client Section -->
+              <div class="p-4 border-bottom">
+                <h5 class="d-flex align-items-center text-primary">
+                  <i class="bi bi-person-circle me-2"></i>
+                  Client Information
+                </h5>
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    {{ form.client|as_crispy_field }}
+                  </div>
+                  <div class="col-md-3">
+                    {{ form.date_issued|as_crispy_field }}
+                  </div>
+                  <div class="col-md-3">
+                    {{ form.due_date|as_crispy_field }}
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Invoice Details -->
+              <div class="p-4 border-bottom bg-light">
+                <div class="row g-3">
+                  <div class="col-md-3">
+                    {{ form.status|as_crispy_field }}
+                  </div>
+                  <div class="col-md-3">
+                    {{ form.tax|as_crispy_field }}
+                  </div>
+                  <div class="col-md-3">
+                    {{ form.discount|as_crispy_field }}
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Items Section -->
+              <div class="p-4 border-bottom">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <h5 class="d-flex align-items-center text-primary mb-0">
+                    <i class="bi bi-cart-plus me-2"></i>
+                    Invoice Items
+                  </h5>
+                  <button type="button" id="add-item" class="btn btn-sm btn-outline-primary rounded-pill shadow-sm">
+                    <i class="bi bi-plus-lg me-1"></i> Add Item
+                  </button>
+                </div>
+                
+                {{ formset.management_form }}
+                <div id="items-container" class="mb-3">
+                  {% for form in formset %}
+                  <div class="item-card bg-white p-3 mb-3 rounded shadow-sm" id="item-{{ forloop.counter0 }}">
+                    <div class="row g-2 align-items-end">
+                      <div class="col-md-5">
+                        {{ form.description|as_crispy_field }}
+                      </div>
+                      <div class="col-md-2">
+                        {{ form.quantity|as_crispy_field }}
+                      </div>
+                      <div class="col-md-2">
+                        {{ form.unit_price|as_crispy_field }}
+                      </div>
+                      <div class="col-md-2">
+                        {{ form.tax|as_crispy_field }}
+                      </div>
+                      <div class="col-md-1 text-end">
+                        {% if form.DELETE %}
+                        <button type="button" class="btn btn-sm btn-outline-danger remove-item">
+                          <i class="bi bi-trash"></i>
+                        </button>
+                        <div class="d-none">{{ form.DELETE }}</div>
+                        {% endif %}
+                      </div>
+                      {{ form.id }}
+                    </div>
+                  </div>
+                  {% endfor %}
+                </div>
+              </div>
+              
+              <!-- Notes & Terms -->
+              <div class="p-4">
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    {{ form.notes|as_crispy_field }}
+                  </div>
+                  <div class="col-md-6">
+                    {{ form.terms|as_crispy_field }}
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Form Actions -->
+              <div class="p-4 bg-light rounded-bottom">
+                <div class="d-flex justify-content-between">
+                  <button type="reset" class="btn btn-outline-secondary rounded-pill px-4">
+                    <i class="bi bi-arrow-counterclockwise me-1"></i> Reset
+                  </button>
+                  <button type="submit" class="btn btn-primary rounded-pill px-4 shadow-primary">
+                    <i class="bi bi-save me-1"></i> 
+                    {% if invoice %}Update Invoice{% else %}Create Invoice{% endif %}
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Summary Column -->
+      <div class="col-lg-4">
+        <div class="sticky-top" style="top: 20px;">
+          <!-- Summary Card -->
+          <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-primary text-white">
+              <h5 class="mb-0">
+                <i class="bi bi-receipt me-2"></i>
+                Invoice Summary
+              </h5>
+            </div>
+            <div class="card-body">
+              <div id="invoiceSummary" class="text-center py-4">
+                <div class="empty-state">
+                  <i class="bi bi-calculator display-4 text-muted mb-3"></i>
+                  <h6 class="text-muted">Add items to see summary</h6>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Quick Actions -->
+          <div class="card shadow-sm border-0">
+            <div class="card-header bg-success text-white">
+              <h5 class="mb-0">
+                <i class="bi bi-lightning me-2"></i>
+                Quick Actions
+              </h5>
+            </div>
+            <div class="card-body">
+              <div class="d-grid gap-2">
+                <button id="preview-btn" class="btn btn-outline-primary rounded-pill text-start">
+                  <i class="bi bi-printer me-2"></i> Print Preview
+                </button>
+                <button class="btn btn-outline-success rounded-pill text-start">
+                  <i class="bi bi-envelope me-2"></i> Send to Client
+                </button>
+                <button class="btn btn-outline-info rounded-pill text-start">
+                  <i class="bi bi-files me-2"></i> Duplicate Invoice
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty form template -->
+    <div id="empty-form" class="d-none">
+      <div class="item-card bg-white p-3 mb-3 rounded shadow-sm" id="item-__prefix__">
+        <div class="row g-2 align-items-end">
+          <div class="col-md-5">
+            {{ items_formset.description|as_crispy_field }}
+          </div>
+          <div class="col-md-2">
+            {{ formset.items_formset.quantity|as_crispy_field }}
+          </div>
+          <div class="col-md-2">
+            {{ formset.empty_form.unit_price|as_crispy_field }}
+          </div>
+          <div class="col-md-2">
+            {{ formset.empty_form.tax|as_crispy_field }}
+          </div>
+          <div class="col-md-1 text-end">
+            <button type="button" class="btn btn-sm btn-outline-danger remove-item">
+              <i class="bi bi-trash"></i>
+            </button>
+            <div class="d-none">{{ formset.empty_form.DELETE }}</div>
+          </div>
+          {{ formset.empty_form.id }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Preview Modal -->
+    <div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+          <div class="modal-header bg-primary text-white">
+            <h5 class="modal-title" id="previewModalLabel">Invoice Preview</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body" id="previewModalBody">
+            Loading preview...
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" id="print-preview">
+              <i class="bi bi-printer me-1"></i> Print
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modern Toast Notification -->
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+      <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header bg-primary text-white">
+          <strong class="me-auto">Invoice Saved</strong>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+          Your invoice has been saved successfully!
+        </div>
+      </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Add item button functionality
+  const addItemBtn = document.getElementById('add-item');
+  const itemsContainer = document.getElementById('items-container');
+  
+  // Function to add event listeners to item inputs
+  function addItemEventListeners(itemElement) {
+    const inputs = itemElement.querySelectorAll('input');
+    inputs.forEach(input => {
+      input.addEventListener('input', calculateTotals);
+    });
+  }
+  
+  // Initialize event listeners for existing items
+  document.querySelectorAll('.item-card').forEach(item => {
+    addItemEventListeners(item);
+  });
+  
+  // Add new item
+  addItemBtn.addEventListener('click', function() {
+    const totalForms = document.getElementById('id_items-TOTAL_FORMS');
+    const formIdx = totalForms.value;
+    
+    // Replace __prefix__ in the empty form template
+    const newFormHtml = document.getElementById('empty-form').innerHTML.replace(/__prefix__/g, formIdx);
+    
+    // Create new item element
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = newFormHtml.trim();
+    const newItem = tempDiv.firstChild;
+    
+    // Add to container
+    itemsContainer.appendChild(newItem);
+    
+    // Update total forms count
+    totalForms.value = parseInt(formIdx) + 1;
+    
+    // Add event listeners to new inputs
+    addItemEventListeners(newItem);
+    
+    // Trigger calculation
+    calculateTotals();
+    
+    // Scroll to new item
+    newItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  });
+  
+  // Remove item functionality
+  document.addEventListener('click', function(e) {
+    if (e.target.closest('.remove-item')) {
+      const itemCard = e.target.closest('.item-card');
+      const deleteField = itemCard.querySelector('[id$="-DELETE"]');
+      
+      if (deleteField) {
+        // Mark for deletion and hide
+        deleteField.value = 'on';
+        itemCard.style.display = 'none';
+      } else {
+        // If no DELETE field, remove completely if more than one item exists
+        const visibleItems = document.querySelectorAll('.item-card:not([style*="display: none"])');
+        if (visibleItems.length > 1) {
+          itemCard.remove();
+        } else {
+          showToast('You need at least one item', 'warning');
+        }
+      }
+      calculateTotals();
+    }
+  });
+  
+  // Calculate invoice totals
+  function calculateTotals() {
+    let subtotal = 0;
+    let taxTotal = 0;
+    
+    document.querySelectorAll('.item-card:not([style*="display: none"])').forEach(item => {
+      const quantity = parseFloat(item.querySelector('[id$="-quantity"]')?.value) || 0;
+      const unitPrice = parseFloat(item.querySelector('[id$="-unit_price"]')?.value) || 0;
+      const taxRate = parseFloat(item.querySelector('[id$="-tax"]')?.value) || 0;
+      
+      const itemTotal = quantity * unitPrice;
+      const itemTax = itemTotal * (taxRate / 100);
+      
+      subtotal += itemTotal;
+      taxTotal += itemTax;
+    });
+    
+    const discount = parseFloat(document.getElementById('id_discount')?.value) || 0;
+    const total = subtotal + taxTotal - discount;
+    
+    updateSummaryDisplay(subtotal, taxTotal, discount, total);
+  }
+  
+  // Update summary display
+  function updateSummaryDisplay(subtotal, tax, discount, total) {
+    const summaryElement = document.getElementById('invoiceSummary');
+    
+    if (subtotal === 0) {
+      summaryElement.innerHTML = `
+        <div class="empty-state">
+          <i class="bi bi-calculator display-4 text-muted mb-3"></i>
+          <h6 class="text-muted">Add items to see summary</h6>
+        </div>
+      `;
+      return;
+    }
+    
+    const summaryHtml = `
+      <div class="mb-3">
+        <canvas id="summaryChart" height="120"></canvas>
+      </div>
+      <table class="table table-sm">
+        <tr>
+          <td>Subtotal:</td>
+          <td class="text-end">$${subtotal.toFixed(2)}</td>
+        </tr>
+        <tr>
+          <td>Tax:</td>
+          <td class="text-end">$${tax.toFixed(2)}</td>
+        </tr>
+        <tr>
+          <td>Discount:</td>
+          <td class="text-end">-$${discount.toFixed(2)}</td>
+        </tr>
+        <tr class="table-active fw-bold">
+          <td>Total:</td>
+          <td class="text-end">$${total.toFixed(2)}</td>
+        </tr>
+      </table>
+    `;
+    
+    summaryElement.innerHTML = summaryHtml;
+    
+    // Initialize chart if Chart.js is available
+    if (typeof Chart !== 'undefined') {
+      const ctx = document.getElementById('summaryChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Subtotal', 'Tax', 'Discount'],
+          datasets: [{
+            data: [subtotal, tax, discount],
+            backgroundColor: [
+              '#4e73df',
+              '#1cc88a',
+              '#e74a3b'
+            ],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          cutout: '70%',
+          plugins: {
+            legend: {
+              display: false
+            }
+          }
+        }
+      });
+    }
+  }
+  
+  // Preview button functionality
+  document.getElementById('preview-btn')?.addEventListener('click', function() {
+    const form = document.getElementById('invoiceForm');
+    const formData = new FormData(form);
+    
+    // Show loading state
+    const previewModal = new bootstrap.Modal(document.getElementById('previewModal'));
+    document.getElementById('previewModalBody').innerHTML = `
+      <div class="text-center py-4">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-2">Generating preview...</p>
+      </div>
+    `;
+    previewModal.show();
+    
+    // Submit form data via AJAX
+    fetch("", {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'X-CSRFToken': '{{ csrf_token }}'
+      }
+    })
+    .then(response => response.text())
+    .then(html => {
+      document.getElementById('previewModalBody').innerHTML = html;
+    })
+    .catch(error => {
+      console.error('Preview error:', error);
+      document.getElementById('previewModalBody').innerHTML = `
+        <div class="alert alert-danger">
+          Failed to generate preview. Please try again.
+        </div>
+      `;
+    });
+  });
+  
+  // Print button in preview modal
+  document.getElementById('print-preview')?.addEventListener('click', function() {
+    window.print();
+  });
+  
+  // Show toast notifications
+  function showToast(message, type = 'success') {
+    const toastEl = document.getElementById('liveToast');
+    const toastHeader = toastEl.querySelector('.toast-header');
+    
+    // Set toast style based on type
+    toastHeader.className = `toast-header bg-${type} ${type === 'warning' ? 'text-dark' : 'text-white'}`;
+    
+    // Update message
+    toastEl.querySelector('.toast-body').textContent = message;
+    
+    // Show toast
+    const toast = new bootstrap.Toast(toastEl);
+    toast.show();
+  }
+  
+  // Add listeners to main form fields
+  document.getElementById('id_tax')?.addEventListener('input', calculateTotals);
+  document.getElementById('id_discount')?.addEventListener('input', calculateTotals);
+  
+  // Initialize calculations on page load
+  calculateTotals();
+});
+</script>
+{% endblock %}

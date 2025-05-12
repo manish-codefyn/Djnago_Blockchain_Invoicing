@@ -1,0 +1,23 @@
+{% extends "notifications/email/base.html" %}
+
+{% block title %}Overdue Invoice - {{ invoice.invoice_number }}{% endblock %}
+
+{% block header %}Invoice Overdue Notice{% endblock %}
+
+{% block content %}
+<p>Hello {{ recipient.first_name }},</p>
+
+<p>This is a reminder that invoice <strong>{{ invoice.invoice_number }}</strong> is overdue by {{ days_overdue }} day{{ days_overdue|pluralize }}:</p>
+
+<ul>
+    <li><strong>Amount Due:</strong> {{ invoice.formatted_total }}</li>
+    <li><strong>Due Date:</strong> {{ invoice.due_date|date:"F j, Y" }}</li>
+    <li><strong>Days Overdue:</strong> {{ days_overdue }}</li>
+</ul>
+
+<p>Please make payment as soon as possible to avoid any late fees or service interruptions.</p>
+
+<a href="{{ invoice_url }}" class="button">Pay Invoice Now</a>
+
+<p>If you've already made payment, please disregard this notice or contact us to update our records.</p>
+{% endblock %}

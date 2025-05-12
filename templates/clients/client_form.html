@@ -1,0 +1,124 @@
+{% extends "base_dash.html" %}
+{% load humanize %}
+
+{% block content %}
+<div class="card shadow-sm border-0 rounded-lg">
+    <div class="card-header bg-white border-0 py-3">
+        <h5 class="mb-0">
+            {% if form.instance.id %}
+                <i class="bi bi-person-gear me-2"></i>Edit Client
+            {% else %}
+                <i class="bi bi-person-plus me-2"></i>Add New Client
+            {% endif %}
+        </h5>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+                {% for error in form.non_field_errors %}
+                    {{ error }}
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            <div class="row g-3 mb-4">
+                <!-- Basic Information -->
+                <div class="col-md-6">
+                    <label for="{{ form.name.id_for_label }}" class="form-label">Client Name*</label>
+                    {{ form.name }}
+                    {% if form.name.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.name.errors.as_text }}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="col-md-6">
+                    <label for="{{ form.email.id_for_label }}" class="form-label">Email*</label>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.email.errors.as_text }}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="col-md-6">
+                    <label for="{{ form.phone.id_for_label }}" class="form-label">Phone</label>
+                    {{ form.phone }}
+                    {% if form.phone.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.phone.errors.as_text }}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="col-md-6">
+                    <label for="{{ form.tax_id.id_for_label }}" class="form-label">Tax ID</label>
+                    {{ form.tax_id }}
+                    {% if form.tax_id.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.tax_id.errors.as_text }}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="mb-4">
+                <label for="{{ form.address.id_for_label }}" class="form-label">Address</label>
+                {{ form.address }}
+                {% if form.address.errors %}
+                    <div class="invalid-feedback d-block">
+                        {{ form.address.errors.as_text }}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="mb-4">
+                <label for="{{ form.notes.id_for_label }}" class="form-label">Notes</label>
+                {{ form.notes }}
+                {% if form.notes.errors %}
+                    <div class="invalid-feedback d-block">
+                        {{ form.notes.errors.as_text }}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="d-flex justify-content-between">
+                <a href="{% if form.instance.id %}{% url 'clients:client_detail' form.instance.id %}{% else %}{% url 'clients:client_list' %}{% endif %}" 
+                   class="btn btn-secondary">
+                    <i class="bi bi-arrow-left me-2"></i>Cancel
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    {% if form.instance.id %}
+                        <i class="bi bi-check-circle me-2"></i>Update Client
+                    {% else %}
+                        <i class="bi bi-save me-2"></i>Save Client
+                    {% endif %}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        // Add Bootstrap validation classes
+        $('input, textarea, select').addClass('form-control');
+        $('input[type="checkbox"], input[type="radio"]').removeClass('form-control');
+        
+        // Initialize phone input mask if needed
+        $('#{{ form.phone.id_for_label }}').inputmask('(999) 999-9999');
+        
+        // Highlight required fields
+        $('input[required], select[required], textarea[required]').each(function() {
+            $(this).closest('.form-group').find('label').append('<span class="text-danger"> *</span>');
+        });
+    });
+</script>
+{% endblock %}

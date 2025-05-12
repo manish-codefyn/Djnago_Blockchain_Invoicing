@@ -1,0 +1,89 @@
+{% extends "base_dash.html" %}
+{% load humanize %}
+{% load sum_tags %}
+{% block title %}Client Report{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="h3 mb-0">Client Report</h1>
+            <p class="text-muted">Summary of invoices by client</p>
+        </div>
+        <div class="col-auto">
+            <a href="{% url 'invoices:export_client_report' %}" class="btn btn-primary">
+                <i class="fas fa-file-export"></i> Export to Excel
+            </a>
+        </div>
+    </div>
+
+    <div class="card shadow">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover table-striped">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>Client</th>
+                            <th>Company</th>
+                            <th class="text-right">Total Invoices</th>
+                            <th class="text-right">Total Amount</th>
+                            <th class="text-right">Paid</th>
+                            <th class="text-right">Outstanding</th>
+                            <th class="text-right">% Paid</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for client in report_data %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'clients:client_detail' client.client_id %}">
+                                    {{ client.client_name }}
+                                </a>
+                            </td>
+                            <td>{{ client.client_company|default:"-" }}</td>
+                            <td class="text-right">{{ client.total_invoices }}</td>
+                            <td class="text-right">{{ client.total_amount|floatformat:2|intcomma }}</td>
+                            <td class="text-right text-success">{{ client.total_paid|floatformat:2|intcomma }}</td>
+                            <td class="text-right text-danger">{{ client.total_outstanding|floatformat:2|intcomma }}</td>
+                            <td class="text-right">
+                                {% widthratio client.total_paid client.total_amount 100 as paid_percent %}
+                                {{ paid_percent|floatformat:1 }}%
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center text-muted">No client data available</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+
+                    <tfoot class="font-weight-bold">
+                        <tr>
+                            <td colspan="2">Totals</td>
+                            <td class="text-right">{{ report_data|length }}</td>
+                            <td class="text-right">{{ total_amount|floatformat:2|intcomma }}</td>
+                            <td class="text-right text-success">{{ total_paid|floatformat:2|intcomma }}</td>
+                            <td class="text-right text-danger">{{ total_outstanding|floatformat:2|intcomma }}</td>
+                            <td class="text-right">{{ paid_percent|floatformat:1 }}%</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .table th {
+        white-space: nowrap;
+    }
+    .text-success {
+        color: #28a745 !important;
+    }
+    .text-danger {
+        color: #dc3545 !important;
+    }
+</style>
+{% endblock %}

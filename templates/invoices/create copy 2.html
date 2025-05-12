@@ -1,0 +1,326 @@
+{% extends 'base.html'%} 
+{% block content %}
+<main class="main-content">
+  <div class="bg-light">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center px-3 pt-2">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <a href="{% url 'invoice-list' %}">Dashboard</a>
+          </li>
+          <li class="breadcrumb-item active" aria-current="page">
+            {% if pagename %}{{ pagename }}{% endif %}
+          </li>
+        </ol>
+      </nav>
+    </div>
+    <!--end-->
+    <div class="row">
+      <div class="col-md-8">
+          <div class="card mb-4">
+              <div class="card-header bg-primary text-white">
+                  <h4>Create New Invoice</h4>
+              </div>
+              <div class="card-body">
+                  <form id="invoiceForm">
+                      {% csrf_token %}
+                      <div class="row mb-3">
+                          <div class="col-md-6">
+                              <label for="id_customer_name" class="form-label">Customer Name</label>
+                              {{ form.customer_name }}
+                          </div>
+                          <div class="col-md-6">
+                              <label for="id_mobile" class="form-label">Mobile</label>
+                              {{ form.mobile }}
+                          </div>
+                      </div>
+                      
+                      <div class="row mb-3">
+                          <div class="col-md-6">
+                              <label for="id_email" class="form-label">Email</label>
+                              {{ form.email }}
+                          </div>
+                          <div class="col-md-6">
+                            <label for="id_payment_status" class="form-label">Payment Status</label>
+                            {{ form.payment_status }}
+                        </div>
+                        
+                      </div>
+                      
+                      <div class="row mb-3">
+                          <div class="col-md-6">
+                              <label for="id_due_date" class="form-label">Due Date</label>
+                              {{ form.due_date }}
+                          </div>
+                          <div class="col-md-6">
+                            <label for="id_invoice_date" class="form-label">Invoice Date</label>
+                            {{ form.invoice_date }}
+                        </div>
+                      </div>
+                      
+                      <div class="mb-3">
+                          <label for="id_address" class="form-label">Address</label>
+                          {{ form.address }}
+                      </div>
+                      
+                      <hr>
+                      
+                      <h5>Products/Services</h5>
+                      <div id="productRows">
+                          <div class="product-row row mb-3">
+                              <div class="col-md-5">
+                                  <input type="text" class="form-control product-name" placeholder="Product/Service" required>
+                              </div>
+                              <div class="col-md-2">
+                                  <input type="number" class="form-control quantity" placeholder="Qty" min="1" value="1" required>
+                              </div>
+                              <div class="col-md-2">
+                                  <input type="number" step="0.01" class="form-control price" placeholder="Price" min="0" required>
+                              </div>
+                              <div class="col-md-2">
+                                  <input type="text" class="form-control amount" placeholder="Amount" readonly>
+                              </div>
+                              <div class="col-md-1">
+                                  <button type="button" class="btn btn-danger remove-product">
+                                      <i class="bi bi-trash"></i>
+                                  </button>
+                              </div>
+                          </div>
+                      </div>
+                      
+                      <button type="button" id="addProduct" class="btn btn-secondary mb-4">
+                          <i class="bi bi-plus"></i> Add Product
+                      </button>
+                      
+                      <div class="row mb-3">
+                          <div class="col-md-6">
+                              <label for="taxRate" class="form-label">Tax Rate (%)</label>
+                              <input type="number" step="0.01" class="form-control" id="taxRate" value="0" min="0">
+                          </div>
+                          <div class="col-md-6">
+                              <label for="discount" class="form-label">Discount (₹)</label>
+                              <input type="number" step="0.01" class="form-control" id="discount" value="0" min="0">
+                          </div>
+                      </div>
+                      
+                      <div class="mb-3">
+                          <label for="id_notes" class="form-label">Notes</label>
+                          {{ form.notes }}
+                      </div>
+                      
+                      <div class="mb-3">
+                          <label for="id_terms" class="form-label">Terms & Conditions</label>
+                          {{ form.terms }}
+                      </div>
+                      
+                      <button type="submit" class="btn btn-primary">Save Invoice</button>
+                  </form>
+              </div>
+          </div>
+      </div>
+      
+      <div class="col-md-4">
+          <div class="card invoice-preview">
+              <div class="card-header bg-success text-white">
+                  <h4>Invoice Summary</h4>
+              </div>
+              <div class="card-body">
+                  <div id="invoiceSummary">
+                      <p class="text-muted">Add products to see summary</p>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+  
+  <div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog">
+          <div class="modal-content">
+              <div class="modal-header bg-success text-white">
+                  <h5 class="modal-title">Success</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                  <p>Invoice created successfully!</p>
+                  <p>Invoice Number: <strong id="invoiceNumber"></strong></p>
+              </div>
+              <div class="modal-footer">
+                  <a href="#" id="viewInvoiceBtn" class="btn btn-primary">View Invoice</a>
+                  <a href="{% url 'invoice-create' %}" class="btn btn-secondary">Create Another</a>
+              </div>
+          </div>
+      </div>
+  </div>
+
+  
+
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+      // Add product row
+      document.getElementById('addProduct').addEventListener('click', function() {
+          const productRow = document.querySelector('.product-row').cloneNode(true);
+          productRow.querySelectorAll('input').forEach(input => input.value = '');
+          productRow.querySelector('.quantity').value = '1';
+          document.getElementById('productRows').appendChild(productRow);
+          attachProductRowEvents(productRow);
+          calculateTotals();
+      });
+  
+      // Remove product row
+      function attachProductRowEvents(row) {
+          row.querySelector('.remove-product').addEventListener('click', function() {
+              if (document.querySelectorAll('.product-row').length > 1) {
+                  row.remove();
+                  calculateTotals();
+              }
+          });
+  
+          // Calculate amount when quantity or price changes
+          const quantityInput = row.querySelector('.quantity');
+          const priceInput = row.querySelector('.price');
+          const amountInput = row.querySelector('.amount');
+  
+          [quantityInput, priceInput].forEach(input => {
+              input.addEventListener('input', function() {
+                  const quantity = parseFloat(quantityInput.value) || 0;
+                  const price = parseFloat(priceInput.value) || 0;
+                  amountInput.value = (quantity * price).toFixed(2);
+                  calculateTotals();
+              });
+          });
+      }
+  
+      // Attach events to initial product row
+      document.querySelectorAll('.product-row').forEach(row => {
+          attachProductRowEvents(row);
+      });
+  
+      // Calculate all totals
+      function calculateTotals() {
+          const taxRate = parseFloat(document.getElementById('taxRate').value) || 0;
+          const discount = parseFloat(document.getElementById('discount').value) || 0;
+          
+          let subtotal = 0;
+          document.querySelectorAll('.product-row').forEach(row => {
+              const quantity = parseFloat(row.querySelector('.quantity').value) || 0;
+              const price = parseFloat(row.querySelector('.price').value) || 0;
+              subtotal += quantity * price;
+          });
+          
+          const taxAmount = subtotal * (taxRate / 100);
+          const totalAmount = subtotal + taxAmount - discount;
+          
+          // Update summary
+          const summaryHTML = `
+              <table class="table">
+                  <tr>
+                      <th>Subtotal:</th>
+                      <td class="text-end">₹${subtotal.toFixed(2)}</td>
+                  </tr>
+                  <tr>
+                      <th>Tax (${taxRate}%):</th>
+                      <td class="text-end">₹${taxAmount.toFixed(2)}</td>
+                  </tr>
+                  <tr>
+                      <th>Discount:</th>
+                      <td class="text-end">-₹${discount.toFixed(2)}</td>
+                  </tr>
+                  <tr class="table-active">
+                      <th>Total:</th>
+                      <td class="text-end fw-bold">₹${totalAmount.toFixed(2)}</td>
+                  </tr>
+              </table>
+          `;
+          document.getElementById('invoiceSummary').innerHTML = summaryHTML;
+      }
+  
+      // Handle tax and discount changes
+      document.getElementById('taxRate').addEventListener('input', calculateTotals);
+      document.getElementById('discount').addEventListener('input', calculateTotals);
+  
+ // Form submission
+ document.getElementById('invoiceForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    let hasValidProducts = false;
+    const product_details = [];
+
+    document.querySelectorAll('.product-row').forEach(row => {
+        const name = row.querySelector('.product-name').value.trim();
+        const quantity = parseFloat(row.querySelector('.quantity').value) || 0;
+        const price = parseFloat(row.querySelector('.price').value) || 0;
+
+        if (name && price > 0) {
+            hasValidProducts = true;
+            product_details.push({
+                'name': name,
+                'quantity': quantity,
+                'price': price,
+                'amount': (quantity * price).toFixed(2)
+            });
+        }
+    });
+
+    if (!hasValidProducts) {
+        alert('Please add at least one product with a name and price');
+        return;
+    }
+
+    const tax_rate = parseFloat(document.getElementById('taxRate').value) || 0;
+    const discount_amount = parseFloat(document.getElementById('discount').value) || 0;
+
+    let subtotal = 0;
+    product_details.forEach(product => {
+        subtotal += product.quantity * product.price;
+    });
+
+    const tax_amount = subtotal * (tax_rate / 100);
+    const total_amount = subtotal + tax_amount - discount_amount;
+
+    const formData = {
+        'customer_name': document.getElementById('id_customer_name').value,
+        'mobile': document.getElementById('id_mobile').value,
+        'email': document.getElementById('id_email').value,
+        'invoice_date': document.getElementById('id_invoice_date').value,
+        'due_date': document.getElementById('id_due_date').value,
+        'payment_status': document.getElementById('id_payment_status').value,
+        'address': document.getElementById('id_address').value,
+        'notes': document.getElementById('id_notes').value,
+        'terms': document.getElementById('id_terms').value,
+        'product_details': product_details,
+        'subtotal': subtotal.toFixed(2),
+        'tax_rate': tax_rate.toFixed(2),
+        'tax_amount': tax_amount.toFixed(2),
+        'discount_amount': discount_amount.toFixed(2),
+        'total_amount': total_amount.toFixed(2)
+    };
+
+    fetch('{% url "invoice-create" %}', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById('invoiceNumber').textContent = data.invoice_no;
+            document.getElementById('viewInvoiceBtn').href = `/Invoice/${data.invoice_id}`;
+            const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+            successModal.show();
+        } else {
+            alert('Error: ' + JSON.stringify(data.errors));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while saving the invoice');
+    });
+});
+  });
+  </script>
+  {% endblock %}
+
+</main>

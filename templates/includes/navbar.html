@@ -1,0 +1,385 @@
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top shadow-sm">
+    <div class="container">
+        <!-- Brand -->
+        <a class="navbar-brand d-flex align-items-center" href="{% url 'core:dashboard' %}">
+            {% if logo_url %}
+            <img src="{{ logo_url }}" alt="Logo" class="img-fluid" style="max-height: 40px;">
+            {% else %}
+            <span class="fw-bold text-white">{{ site_name }}</span>
+            {% endif %}
+        </a>
+
+        <!-- Mobile Toggle -->
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Desktop Menu -->
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav me-auto">
+                {% if user.is_authenticated %}
+                <!-- Campaigns Mega Dropdown -->
+                <li class="nav-item dropdown me-2">
+                    <a class="nav-link dropdown-toggle d-flex align-items-center text-white" href="#" id="campaignsDropdown" role="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-megaphone me-2"></i> Campaigns
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-lg rounded-3 border-0 shadow-lg p-3" style="width: 800px;">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6 class="dropdown-header text-primary">Campaign Management</h6>
+                                <a class="dropdown-item d-flex align-items-center py-2" href="{% url 'campaign:campaign_list' %}">
+                                    <i class="bi bi-list-ul me-2 text-primary"></i> All Campaigns
+                                </a>
+                                <a class="dropdown-item d-flex align-items-center py-2" href="{% url 'campaign:campaign_create' %}">
+                                    <i class="bi bi-plus-circle me-2 text-success"></i> Create New
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <h6 class="dropdown-header text-primary">Tracking & Analytics</h6>
+                                <a class="dropdown-item d-flex align-items-center py-2" href="{% url 'campaign:campaign_list' %}">
+                                    <i class="bi bi-graph-up me-2 text-info"></i> Analytics Dashboard
+                                </a>
+                                <a class="dropdown-item d-flex align-items-center py-2" href="{% url 'campaign:campaign_list' %}">
+                                    <i class="bi bi-eye me-2 text-secondary"></i> Open Tracking
+                                </a>
+                                <a class="dropdown-item d-flex align-items-center py-2" href="{% url 'campaign:campaign_list' %}">
+                                    <i class="bi bi-mouse me-2 text-warning"></i> Click Tracking
+                                </a>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="dropdown-header text-primary">Campaign Actions</h6>
+                                <a class="dropdown-item d-flex align-items-center py-2" href="{% url 'campaign:campaign_list' %}">
+                                    <i class="bi bi-envelope me-2 text-primary"></i> Send Test Email
+                                </a>
+                                <a class="dropdown-item d-flex align-items-center py-2" href="{% url 'campaign:campaign_list' %}">
+                                    <i class="bi bi-send me-2 text-success"></i> Send Campaign
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <h6 class="dropdown-header text-primary">Monitoring</h6>
+                                <a class="dropdown-item d-flex align-items-center py-2" href="{% url 'campaign:campaign_list' %}">
+                                    <i class="bi bi-speedometer2 me-2 text-info"></i> Campaign Monitor
+                                </a>
+                                <a class="dropdown-item d-flex align-items-center py-2" href="{% url 'campaign:campaign_list' %}">
+                                    <i class="bi bi-bar-chart me-2 text-primary"></i> Progress Tracking
+                                </a>
+                                <a class="dropdown-item d-flex align-items-center py-2" href="{% url 'campaign:campaign_list' %}">
+                                    <i class="bi bi-hourglass-split me-2 text-warning"></i> Campaign Status
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+
+                <!-- Templates Dropdown -->
+                <li class="nav-item dropdown me-2">
+                    <a class="nav-link dropdown-toggle d-flex align-items-center text-white" href="#" id="templatesDropdown" role="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-file-earmark-text me-2"></i> Templates
+                    </a>
+                    <ul class="dropdown-menu border-0 shadow">
+                        <li><a class="dropdown-item d-flex align-items-center" href="{% url 'campaign:emailtemplate_list' %}">
+                            <i class="bi bi-collection me-2 text-primary"></i> All Templates
+                        </a></li>
+                        <li><a class="dropdown-item d-flex align-items-center" href="{% url 'campaign:emailtemplate_create' %}">
+                            <i class="bi bi-plus-circle me-2 text-success"></i> Create Template
+                        </a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item d-flex align-items-center" href="{% url 'campaign:emailtemplate_gallery' %}">
+                            <i class="bi bi-grid me-2 text-info"></i> Template Gallery
+                        </a></li>
+                    </ul>
+                </li>
+
+                <!-- Subscribers Dropdown -->
+                <li class="nav-item dropdown me-2">
+                    <a class="nav-link dropdown-toggle d-flex align-items-center text-white" href="#" id="subscribersDropdown" role="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-people-fill me-2"></i> Subscribers
+                    </a>
+                    <ul class="dropdown-menu border-0 shadow">
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href="{% url 'subscriber:subscriber_list' %}">
+                                <i class="bi bi-person-lines-fill me-2 text-primary"></i> All Subscribers
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href="{% url 'subscriber:subscriber_create' %}">
+                                <i class="bi bi-person-plus me-2 text-success"></i> Add New Subscriber
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href="{% url 'subscriber:subscriberlist_list' %}">
+                                <i class="bi bi-list-ul me-2 text-info"></i> Subscriber Lists
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href="{% url 'subscriber:subscriberlist_create' %}">
+                                <i class="bi bi-list-plus me-2 text-warning"></i> Create Subscriber List
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+        
+         <!-- Site Settings Dropdown -->
+
+         <li class="nav-item dropdown me-2">
+            <a class="nav-link dropdown-toggle d-flex align-items-center text-white" href="#" id="settingsDropdown" role="button" data-bs-toggle="dropdown">
+                <i class="bi bi-gear-wide-connected me-2"></i> Site Settings
+            </a>
+      
+            <ul class="dropdown-menu border-0 shadow">
+                <li>
+                    <a class="dropdown-item d-flex align-items-center" href="{% url 'core:site_settings' %}">
+                        <i class="bi bi-gear me-2 text-primary"></i> General Settings
+                    </a>
+                </li>
+            
+                <li>
+                    <a class="dropdown-item d-flex align-items-center" href="{% url 'core:smtp_settings' %}">
+                        <i class="bi bi-envelope-paper-fill me-2 text-info"></i> SMTP Settings
+                    </a>
+                </li>
+            
+                <li>
+                    <a class="dropdown-item d-flex align-items-center" href="{% url 'core:site_legal_create' %}">
+                        <i class="bi bi-journal-text me-2 text-danger"></i> Legal Settings
+                </li>
+            </ul>
+        </li>
+
+
+                <!-- Plugins Dropdown -->
+                <!-- <li class="nav-item dropdown me-2">
+                    <a class="nav-link dropdown-toggle d-flex align-items-center text-white" href="#" id="pluginsDropdown" role="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-puzzle me-2"></i> Plugins
+                    </a>
+                    <ul class="dropdown-menu border-0 shadow">
+                        <li><a class="dropdown-item d-flex align-items-center" href="{% url 'campaign:plugin_list' %}">
+                            <i class="bi bi-plug me-2 text-primary"></i> Installed Plugins
+                        </a></li>
+                        <li><a class="dropdown-item d-flex align-items-center" href="{% url 'campaign:plugin_create' %}">
+                            <i class="bi bi-plus-circle me-2 text-success"></i> Add New Plugin
+                        </a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item d-flex align-items-center" href="#">
+                            <i class="bi bi-shop me-2 text-info"></i> Plugin Marketplace
+                        </a></li>
+                    </ul>
+                </li> -->
+                {% endif %}
+            </ul>
+
+            <!-- Right Side -->
+            <ul class="navbar-nav">
+                {% if user.is_authenticated %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle d-flex align-items-center text-white" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                        <span class="me-2">{{ user.username }}</span>
+                        <i class="bi bi-person-circle"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end border-0 shadow">
+                        <li>
+                            <div class="dropdown-header">
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 36px; height: 36px;">
+                                        <i class="bi bi-person text-primary"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0">{{ user.username }}</h6>
+                                        <small class="text-muted">{{ user.email }}</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li >
+                            <a class="dropdown-item d-flex align-items-center" href="{% url 'core:home' %}">
+                                <i class="bi bi-house-door me-2"></i> Home
+                            </a>
+                        </li>
+                        <li >
+                            <a class="dropdown-item d-flex align-items-center" href="{% url 'core:dashboard' %}">
+                                <i class="bi bi-speedometer2 me-2"></i> Dashboard
+                            </a>
+                        </li>
+                        <li><a class="dropdown-item d-flex align-items-center" href="{% url 'account_change_password' %}">
+                            <i class="bi bi-shield-lock me-2 text-muted"></i> Account Settings
+                        </a></li>
+                            <!-- Add New Dropdown for Dashboard & Settings -->
+          
+                        <li><a class="dropdown-item d-flex align-items-center" href="#">
+                            <i class="bi bi-bell me-2 text-muted"></i> Notifications
+                        </a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item d-flex align-items-center text-danger" href="{% url 'account_logout' %}">
+                            <i class="bi bi-box-arrow-right me-2"></i> Logout
+                        </a></li>
+                    </ul>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{% url 'account_login' %}">Login</a>
+                </li>
+                <li class="nav-item">
+                    <a class="btn btn-outline-dark ms-2 rounded-pill px-3" href="{% url 'account_signup' %}">Sign Up</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Mobile Menu (White Background) -->
+<div class="offcanvas offcanvas-start" tabindex="-1" id="mobileMenu" style="width: 320px;">
+    <div class="offcanvas-header border-bottom">
+        <h5 class="offcanvas-title d-flex align-items-center">
+            {% if logo_url %}
+                <img src="{{ logo_url }}" alt="Logo" class="img-fluid me-2" style="max-height: 40px;">
+            {% else %}
+            <span class="text-primary fw-bold">{{ site_name }}</span>
+            {% endif %}
+           
+        </h5>
+        
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body p-0">
+        {% if user.is_authenticated %}
+        <div class="accordion accordion-flush" id="mobileAccordion">
+            <!-- Campaigns Accordion -->
+            <div class="accordion-item border-bottom">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed py-3" type="button" data-bs-toggle="collapse" data-bs-target="#mobileCampaigns">
+                        <i class="bi bi-megaphone text-primary me-2"></i> Campaigns
+                    </button>
+                </h2>
+                <div id="mobileCampaigns" class="accordion-collapse collapse">
+                    <div class="accordion-body p-0">
+                        <a class="dropdown-item d-flex align-items-center py-2 ps-4" href="{% url 'campaign:campaign_list' %}">
+                            <i class="bi bi-list-ul text-muted me-2"></i> All Campaigns
+                        </a>
+                        <a class="dropdown-item d-flex align-items-center py-2 ps-4" href="{% url 'campaign:campaign_create' %}">
+                            <i class="bi bi-plus-circle text-muted me-2"></i> Create New
+                        </a>
+                        <a class="dropdown-item d-flex align-items-center py-2 ps-4" href="{% url 'campaign:campaign_list' %}">
+                            <i class="bi bi-graph-up text-muted me-2"></i> Analytics
+                        </a>
+                        <a class="dropdown-item d-flex align-items-center py-2 ps-4" href="{% url 'campaign:campaign_list' %}">
+                            <i class="bi bi-envelope text-muted me-2"></i> Send Test
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Templates Accordion -->
+            <div class="accordion-item border-bottom">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed py-3" type="button" data-bs-toggle="collapse" data-bs-target="#mobileTemplates">
+                        <i class="bi bi-file-earmark-text text-primary me-2"></i> Templates
+                    </button>
+                </h2>
+                <div id="mobileTemplates" class="accordion-collapse collapse">
+                    <div class="accordion-body p-0">
+                        <a class="dropdown-item d-flex align-items-center py-2 ps-4" href="{% url 'campaign:emailtemplate_list' %}">
+                            <i class="bi bi-collection text-muted me-2"></i> All Templates
+                        </a>
+                        <a class="dropdown-item d-flex align-items-center py-2 ps-4" href="{% url 'campaign:emailtemplate_create' %}">
+                            <i class="bi bi-plus-circle text-muted me-2"></i> Create Template
+                        </a>
+                    </div>
+                </div>
+            </div>
+               <!-- Subscribers Accordion -->
+               <div class="accordion-item border-bottom">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed py-3" type="button" data-bs-toggle="collapse" data-bs-target="#mobileSubscribers">
+                        <i class="bi bi-people-fill text-primary me-2"></i> Subscribers
+                    </button>
+                </h2>
+                <div id="mobileSubscribers" class="accordion-collapse collapse">
+                    <div class="accordion-body p-0">
+                        <a class="dropdown-item d-flex align-items-center py-2 ps-4" href="{% url 'subscriber:subscriber_list' %}">
+                            <i class="bi bi-person-lines-fill text-muted me-2"></i> All Subscribers
+                        </a>
+                        <a class="dropdown-item d-flex align-items-center py-2 ps-4" href="{% url 'subscriber:subscriber_create' %}">
+                            <i class="bi bi-person-plus text-muted me-2"></i> Add New Subscriber
+                        </a>
+                        <a class="dropdown-item d-flex align-items-center py-2 ps-4" href="{% url 'subscriber:subscriberlist_list' %}">
+                            <i class="bi bi-list-ul text-muted me-2"></i> Subscriber Lists
+                        </a>
+                        <a class="dropdown-item d-flex align-items-center py-2 ps-4" href="{% url 'subscriber:subscriberlist_create' %}">
+                            <i class="bi bi-list-plus text-muted me-2"></i> Create Subscriber List
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            
+           
+<!-- smtp and setting -->
+            <div class="accordion-item border-bottom">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed py-3" type="button" data-bs-toggle="collapse" data-bs-target="#mobileSettings">
+                        <i class="bi bi-gear text-primary me-2"></i> Settings
+                    </button>
+                </h2>
+                <div id="mobileSettings" class="accordion-collapse collapse">
+                    <div class="accordion-body p-0">
+                        <a class="dropdown-item d-flex align-items-center py-2 ps-4" href="{% url 'core:site_settings' %}">
+                            <i class="bi bi-gear text-muted me-2"></i> Site Settings
+                        </a>
+                        <a class="dropdown-item d-flex align-items-center py-2 ps-4" href="{% url 'core:smtp_settings' %}">
+                            <i class="bi bi-envelope-open text-muted me-2"></i> SMTP Settings
+                        </a>
+                        <a class="dropdown-item d-flex align-items-center py-2 ps-4" href="{% url 'core:site_legal_create' %}">
+                            <i class="bi bi-envelope-open text-muted me-2"></i> Legal Settings
+                        </a>
+                     
+                    </div>
+                </div>
+            </div>
+            <!-- Plugins Accordion -->
+            <!-- <div class="accordion-item border-bottom">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed py-3" type="button" data-bs-toggle="collapse" data-bs-target="#mobilePlugins">
+                        <i class="bi bi-puzzle text-primary me-2"></i> Plugins
+                    </button>
+                </h2>
+                <div id="mobilePlugins" class="accordion-collapse collapse">
+                    <div class="accordion-body p-0">
+                        <a class="dropdown-item d-flex align-items-center py-2 ps-4" href="{% url 'campaign:plugin_list' %}">
+                            <i class="bi bi-plug text-muted me-2"></i> Installed Plugins
+                        </a>
+                        <a class="dropdown-item d-flex align-items-center py-2 ps-4" href="{% url 'campaign:plugin_create' %}">
+                            <i class="bi bi-plus-circle text-muted me-2"></i> Add New Plugin
+                        </a>
+                    </div>
+                </div>
+            </div> -->
+
+        </div>
+
+        <!-- Other Mobile Links -->
+        <div class="p-3 border-top">
+            <a class="d-block py-2 text-decoration-none" href="{% url 'core:home' %}">
+                <i class="bi bi-house-door text-muted me-2"></i> Home
+            </a>
+            <a class="d-block py-2 text-decoration-none" href="{% url 'core:dashboard' %}">
+                <i class="bi bi-speedometer2 me-2"></i> Dashboard
+            </a>
+            
+            <a href="{% url 'account_change_password' %}" class="d-block py-2 text-decoration-none">
+                <i class="bi bi-shield-lock text-muted me-2"></i> Account Settings
+            </a>
+            <a href="{% url 'account_logout' %}" class="d-block py-2 text-danger text-decoration-none">
+                <i class="bi bi-box-arrow-right me-2"></i> Logout
+            </a>
+        </div>
+        {% else %}
+        <div class="p-3">
+            <a href="{% url 'account_login' %}" class="btn btn-primary w-100 mb-2">Login</a>
+            <a href="{% url 'account_signup' %}" class="btn btn-outline-primary w-100">Sign Up</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+

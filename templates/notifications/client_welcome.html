@@ -1,0 +1,29 @@
+{% extends "notifications/email/base.html" %}
+
+{% block title %}Welcome to Our Service{% endblock %}
+
+{% block header %}Welcome to {{ site_name }}!{% endblock %}
+
+{% block content %}
+<p>Hello {{ client.name }},</p>
+
+<p>Thank you for choosing our services. We're excited to have you on board!</p>
+
+<p>Your client account has been set up with the following details:</p>
+
+<ul>
+    <li><strong>Name:</strong> {{ client.name }}</li>
+    <li><strong>Email:</strong> {{ client.email }}</li>
+    {% if client.company %}
+    <li><strong>Company:</strong> {{ client.company }}</li>
+    {% endif %}
+</ul>
+
+<p>You can access your client portal using the button below:</p>
+
+<a href="{{ client_portal_url }}" class="button">Access Client Portal</a>
+
+<p>If you have any questions or need assistance, please don't hesitate to contact us.</p>
+
+<p>Best regards,<br>The {{ site_name }} Team</p>
+{% endblock %}

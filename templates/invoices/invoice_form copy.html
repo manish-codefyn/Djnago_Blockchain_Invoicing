@@ -1,0 +1,46 @@
+{% extends 'base_dash.html' %}
+
+{% block content %}
+<h1>{% if object %}Edit{% else %}Create{% endif %} Invoice</h1>
+
+<form method="post">
+    {% csrf_token %}
+    
+    <div class="form-section">
+        <h2>Invoice Details</h2>
+        {{ form.as_p }}
+    </div>
+    
+    <div class="form-section">
+        <h2>Items</h2>
+        {{ items_formset.management_form }}
+        <table>
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th>Quantity</th>
+                    <th>Unit Price</th>
+                    <th>Tax</th>
+                    <th>Tax Included</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for form in items_formset %}
+                <tr>
+                    <td>{{ form.description }}</td>
+                    <td>{{ form.quantity }}</td>
+                    <td>{{ form.unit_price }}</td>
+                    <td>{{ form.tax }}</td>
+                    <td>{{ form.tax_included }}</td>
+                    <td>{{ form.DELETE }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <button type="submit" class="btn">Save</button>
+    <a href="{% if object %}{% url 'invoices:invoice-detail' object.pk %}{% else %}{% url 'invoices:invoice-list' %}{% endif %}" class="btn">Cancel</a>
+</form>
+{% endblock %}

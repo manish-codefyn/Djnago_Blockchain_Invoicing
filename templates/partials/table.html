@@ -1,0 +1,137 @@
+
+{% load humanize %}
+<div class="row g-4 mb-4">
+    <div class="col-lg-8" data-aos="fade-up" data-aos-delay="400">
+        <div class="card h-100">
+            <div class="card-header bg-white py-3"> <h5 class="card-title mb-0 fw-semibold"><i class="bi bi-list-ul me-2"></i>Recent Invoices</h5> </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover" id="invoicesTable">
+                        <thead>
+                            <tr>
+                                <th>Invoice #</th>
+                                <th>Client</th>
+                                <th>Date Issued</th>
+                                <th>Due Date</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for invoice in recent_invoices %}
+                            <tr>
+                                <td>{{ invoice.invoice_number }}</td>
+                                <td>{{ invoice.client.name }}</td>
+                                <td>{{ invoice.date_issued|date:"M d, Y" }}</td>
+                                <td class="{% if invoice.is_overdue %}text-danger{% endif %}">
+                                    {{ invoice.due_date|date:"M d, Y" }}
+                                </td>
+                                <td>${{ invoice.total_amount|floatformat:2|intcomma }}</td>
+                                <td>
+                                    <span class="badge bg-{% if invoice.status == 'paid' %}success{% elif invoice.status == 'sent' %}info{% elif invoice.status == 'overdue' %}danger{% else %}warning{% endif %}">
+                                        {{ invoice.get_status_display }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="d-flex gap-2">
+                                        <a href="{% url 'invoices:invoice-detail' invoice.id %}" class="btn btn-sm btn-outline-primary" title="View">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a href="{% url 'invoices:invoice-pdf' invoice.id %}" class="btn btn-sm btn-outline-secondary" title="Download PDF">
+                                            <i class="bi bi-download"></i>
+                                        </a>
+                                        <a href="{% url 'invoices:invoice-update' invoice.id %}" class="btn btn-sm btn-outline-info" title="Edit">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <form method="post" action="{% url 'invoices:invoice-delete' invoice.id %}" class="d-inline">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete" onclick="return confirm('Are you sure?')">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="7" class="text-center py-4">No invoices found. <a href="{% url 'invoices:invoice-create' %}">Create your first invoice</a></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+             <div class="card-footer bg-white text-center py-3"> <a href="#" class="text-primary fw-medium">View All Invoices <i class="bi bi-arrow-right-short"></i></a> </div>
+        </div>
+    </div>
+    <div class="col-lg-4" data-aos="fade-up" data-aos-delay="500">
+        <div class="card h-100">
+            <div class="card-header bg-white py-3">
+                <h5 class="card-title mb-0 fw-semibold">
+                    <i class="bi bi-bar-chart-line-fill me-2"></i>Invoice Stats
+                </h5>
+            </div>
+            <div class="card-body d-flex align-items-center justify-content-center">
+                <canvas id="invoiceChart" height="200"></canvas>
+            </div>
+            <div class="card-footer bg-white text-center py-3">
+                <a href="#" class="text-primary fw-medium">View Detailed Report 
+                    <i class="bi bi-arrow-right-short"></i>
+                </a>
+            </div>
+        </div>
+        
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-6 col-lg-4" data-aos="zoom-in">
+         <div class="card"> <div class="card-body text-center"> <i class="bi bi-plus-circle-dotted display-4 text-primary mb-3"></i> <h5 class="card-title">Create New Invoice</h5> <p class="card-text text-muted">Quickly generate and send a new invoice to your client.</p> <a href="{% url  'invoices:invoice-list' %}" class="btn btn-primary"><i class="bi bi-plus-lg me-2"></i>Create Invoice</a> </div> </div>
+    </div>
+     <div class="col-md-6 col-lg-4" data-aos="zoom-in" data-aos-delay="100">
+         <div class="card"> <div class="card-body text-center"> <i class="bi bi-person-plus-fill display-4 text-success mb-3"></i> <h5 class="card-title">Add New Customer</h5> <p class="card-text text-muted">Onboard a new client and save their details for future billing.</p> <a href="{% url  'clients:client_list' %}" class="btn btn-success"><i class="bi bi-person-plus me-2"></i>Add Customer</a> </div> </div>
+    </div>
+     <div class="col-md-12 col-lg-4" data-aos="zoom-in" data-aos-delay="200">
+         <div class="card"> <div class="card-body text-center"> <i class="bi bi-gear-wide-connected display-4 text-secondary mb-3"></i> <h5 class="card-title">System Settings</h5> <p class="card-text text-muted">Configure payment gateways, email templates, and other options.</p> <a href="{% url 'core:settings' %}" class="btn btn-secondary"><i class="bi bi-sliders me-2"></i>Go to Settings</a> </div> </div>
+    </div>
+</div>
+   
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const ctx = document.getElementById('invoiceChart').getContext('2d');
+    
+        const chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: {{ chart_labels|safe }},
+                datasets: [{
+                    label: 'Invoices per Month',
+                    data: {{ chart_data|safe }},
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1,
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                },
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+    });
+    </script>
+    

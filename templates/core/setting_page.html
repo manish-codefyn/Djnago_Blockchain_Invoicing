@@ -1,0 +1,26 @@
+{% extends "base_dash.html" %}
+{% load crispy_forms_tags static %}
+
+{% block title %} Settings - {{site_name}} {% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Website Settings Dashboard</h2>
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <a href="{% url 'core:site_settings' %}" class="btn btn-primary w-100">
+                Site Settings
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a href="{% url 'core:site_legal_detail' %}" class="btn btn-secondary w-100">
+                Legal (Privacy / Terms)
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a href="{% url 'core:smtp_settings' %}" class="btn btn-info w-100">
+                SMTP Settings
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

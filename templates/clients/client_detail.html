@@ -1,0 +1,23 @@
+{% extends "base_dash.html" %}
+{% load humanize %}
+{% block title %}Client Details{% endblock %}
+
+{% block content %}
+<div class="card" data-aos="fade-up">
+    <div class="card-header bg-primary text-white">
+        <h4><i class="bi bi-person-badge"></i> {{ client.name }}</h4>
+    </div>
+    <div class="card-body">
+        <p><strong>Email:</strong> {{ client.email }}</p>
+        <p><strong>Phone:</strong> {{ client.phone|default:"N/A" }}</p>
+        <p><strong>Address:</strong> {{ client.address|default:"N/A" }}</p>
+        <p><strong>Tax ID:</strong> {{ client.tax_id|default:"N/A" }}</p>
+        <p><strong>Notes:</strong> {{ client.notes|default:"None" }}</p>
+        <p><strong>Invoices:</strong> {{ client.invoice_count }}</p>
+        <p><strong>Total Revenue:</strong> ₹{{ client.total_revenue }}</p>
+        <a href="{% url 'invoices:invoice-list' %}" class="btn btn-secondary mt-3">
+            <i class="bi bi-arrow-left"></i> Back to Invoices
+        </a>
+    </div>
+</div>
+{% endblock %}

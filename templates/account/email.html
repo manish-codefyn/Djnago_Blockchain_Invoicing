@@ -1,0 +1,37 @@
+{% extends "account/base.html" %}
+{% load crispy_forms_tags static %}
+{% load i18n %}
+
+{% block content %}
+<div class="container my-5 py-5">
+<div class="shadow-lg rounded-4 mt-4 p-4 ">
+    <h2>{% trans "Manage Email Addresses" %}</h2>
+    <p>{% trans "The following email addresses are associated with your account:" %}</p>
+
+    <ul class="list-group mb-3">
+        {% for emailaddress in emailaddresses %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                {{ emailaddress.email }}
+                {% if emailaddress.primary %}
+                    <span class="badge bg-primary">{% trans "Primary" %}</span>
+                {% endif %}
+                {% if emailaddress.verified %}
+                    <span class="badge bg-success">{% trans "Verified" %}</span>
+                {% else %}
+                    <span class="badge bg-warning text-dark">{% trans "Unverified" %}</span>
+                {% endif %}
+            </li>
+        {% empty %}
+            <li class="list-group-item">{% trans "No email addresses associated with this account." %}</li>
+        {% endfor %}
+    </ul>
+
+    <h3>{% trans "Add Email Address" %}</h3>
+    <form method="post" action="{% url 'account_email' %}">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit" class="btn btn-primary">{% trans "Add Email" %}</button>
+    </form>
+</div>
+</div>
+{% endblock %}

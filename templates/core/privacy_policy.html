@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}Privacy Policy - {{ site_name }}{% endblock %}
+
+{% block content %}
+<section class="privacy-policy-section py-8 py-lg-10">
+    <div class="container">
+        <div class="text-center mb-6">
+            <h1 class="privacy-title">Privacy Policy</h1>
+            <p class="privacy-subtitle">Last Updated: {% now "F j, Y" %}</p>
+        </div>
+
+        <div class="privacy-content">
+            <div class="text-center mb-5">
+                <img src="{{ logo_url }}" alt="{{ site_name }} Logo" class="mb-4" style="height: 50px;">
+                <h2 class="mb-3">CodeFyn Software Solutions</h2>
+                <p class="text-muted">Siliguri, West Bengal, India</p>
+            </div>
+
+            <h5>1. Introduction</h5>
+            <p>Welcome to {{ site_name }} ("we," "our," or "us"). We are committed to protecting your privacy and ensuring the security of your personal information. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our email marketing platform and services.</p>
+
+            <h5>2. Information We Collect</h5>
+            <p>We collect various types of information in connection with the services we provide, including:</p>
+            <ul>
+                <li><strong>Account Information:</strong> Name, email address, company name, and contact details when you register.</li>
+                <li><strong>Payment Information:</strong> Credit card details and billing information (processed securely by our payment processors).</li>
+                <li><strong>Email Campaign Data:</strong> Subject lines, content, recipient lists, and performance metrics.</li>
+                <li><strong>Recipient Information:</strong> Email addresses and engagement data of your subscribers.</li>
+                <li><strong>Technical Data:</strong> IP addresses, browser type, device information, and usage patterns.</li>
+            </ul>
+
+            <h5>3. How We Use Your Information</h5>
+            <p>We use the information we collect to:</p>
+            <ul>
+                <li>Provide, operate, and maintain our services</li>
+                <li>Process transactions and send invoices</li>
+                <li>Improve, personalize, and expand our services</li>
+                <li>Understand and analyze how you use our platform</li>
+                <li>Develop new products, services, features, and functionality</li>
+                <li>Communicate with you for customer service and updates</li>
+                <li>Send you marketing and promotional communications (you can opt-out)</li>
+                <li>Prevent fraud and enhance security</li>
+                <li>Comply with legal obligations</li>
+            </ul>
+
+            <h5>4. Data Sharing and Disclosure</h5>
+            <p>We do not sell your personal information. We may share information with:</p>
+            <ul>
+                <li><strong>Service Providers:</strong> Trusted third parties who assist us in operating our platform (payment processors, hosting providers, analytics services).</li>
+                <li><strong>Legal Requirements:</strong> When required by law or to protect our rights.</li>
+                <li><strong>Business Transfers:</strong> In connection with any merger, sale of company assets, or acquisition.</li>
+            </ul>
+
+            <h5>5. Data Security</h5>
+            <p>We implement appropriate technical and organizational measures to protect your data, including:</p>
+            <ul>
+                <li>Encryption of data in transit and at rest</li>
+                <li>Regular security audits and monitoring</li>
+                <li>Access controls and authentication protocols</li>
+                <li>Employee training on data protection</li>
+            </ul>
+
+            <h5>6. Your Rights and Choices</h5>
+            <p>Depending on your location, you may have certain rights regarding your personal information:</p>
+            <ul>
+                <li>Access and receive a copy of your data</li>
+                <li>Request correction of inaccurate data</li>
+                <li>Request deletion of your data</li>
+                <li>Object to processing of your data</li>
+                <li>Request restriction of processing</li>
+                <li>Withdraw consent where applicable</li>
+                <li>Lodge a complaint with a supervisory authority</li>
+            </ul>
+
+            <h5>7. Cookies and Tracking Technologies</h5>
+            <p>We use cookies and similar tracking technologies to analyze activity and improve our service. You can instruct your browser to refuse all cookies or indicate when a cookie is being sent.</p>
+
+            <h5>8. International Data Transfers</h5>
+            <p>Your information may be transferred to — and maintained on — computers located outside of your state, province, country, or other governmental jurisdiction where data protection laws may differ.</p>
+
+            <h5>9. Children's Privacy</h5>
+            <p>Our service is not intended for children under 13. We do not knowingly collect personally identifiable information from children under 13.</p>
+
+            <h5>10. Changes to This Policy</h5>
+            <p>We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new policy on this page and updating the "Last Updated" date.</p>
+
+            <h5>11. Contact Us</h5>
+            <div class="contact-info bg-light p-4 rounded">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <h6><i class="bi bi-envelope me-2"></i> Email</h6>
+                        <p><a href="mailto:{{ email }}">{{ email }}</a></p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <h6><i class="bi bi-telephone me-2"></i> Phone</h6>
+                        <p><a href="tel:{{ mobile }}">{{ mobile }}</a></p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <h6><i class="bi bi-geo-alt me-2"></i> Address</h6>
+                        <p>{{ address }}</p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <h6><i class="bi bi-clock me-2"></i> Business Hours</h6>
+                        <p>Monday - Friday: 9:00 AM - 6:00 PM IST</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-5">
+                <p class="text-muted">Thank you for trusting CodeFyn Software Solutions with your email marketing needs.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

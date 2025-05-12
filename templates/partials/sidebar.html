@@ -1,0 +1,54 @@
+<nav id="sidebar">
+    <div class="sidebar-header">
+        <h3>
+            <i class="bi bi-receipt-cutoff"></i>
+            <span class="sidebar-title-text">InvoicePro</span>
+        </h3>
+        <button type="button" class="btn-close btn-close-white d-lg-none" id="sidebarCloseInternal" aria-label="Close sidebar"></button>
+    </div>
+    {% if user.is_authenticated %}
+    <ul class="list-unstyled components">
+        <p>Main</p>
+        <li class="active" data-aos="fade-right" data-aos-delay="100">
+            <a href="{% url 'invoices:dashboard' %}"><i class="bi bi-grid-1x2-fill"></i> <span class="link-text">Dashboard</span></a>
+        </li>
+        <!-- <li data-aos="fade-right" data-aos-delay="150">
+            <a href="#invoiceSubmenu" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                <i class="bi bi-file-earmark-text-fill"></i> <span class="link-text">Invoices</span>
+            </a>
+            <ul class="collapse list-unstyled" id="invoiceSubmenu">
+                <li><a href="#"><span class="link-text">All Invoices</span></a></li>
+                <li><a href="#"><span class="link-text">Create New</span></a></li>
+                <li><a href="#"><span class="link-text">Recurring</span></a></li>
+            </ul>
+        </li> -->
+        <li data-aos="fade-right" data-aos-delay="200">
+            <a href="{% url  'clients:client_list' %}"><i class="bi bi-people-fill"></i> <span class="link-text">Clients</span></a>
+        </li>
+        <li data-aos="fade-right" data-aos-delay="200">
+            <a href="{% url  'invoices:invoice-list' %}"><i class="bi bi-file-earmark-pdf"></i>
+                <span class="link-text">Invoices</span></a>
+        </li>
+        <li data-aos="fade-right" data-aos-delay="200">
+            <a href="{% url  'invoices:payment-list' %}"><i class="bi bi-cash-stack"></i> <span class="link-text">Payments</span></a>
+        </li>
+        <!-- <li data-aos="fade-right" data-aos-delay="250">
+            <a href="#"><i class="bi bi-box-seam-fill"></i> <span class="link-text">Products</span></a>
+        </li> -->
+        <li data-aos="fade-right" data-aos-delay="300">
+            <a href="{% url 'invoices:reports' %}"><i class="bi bi-graph-up-arrow"></i> <span class="link-text">Reports</span></a>
+        </li>
+        <p>System</p>
+        <li data-aos="fade-right" data-aos-delay="350">
+            <a href="{% url 'core:settings' %}"><i class="bi bi-gear-fill"></i> <span class="link-text">Settings</span></a>
+        </li>
+        <li data-aos="fade-right" data-aos-delay="400">
+            <a href="#"><i class="bi bi-box-arrow-left"></i> <span class="link-text">Logout</span></a>
+        </li>
+        {% else %}
+        <li data-aos="fade-right" data-aos-delay="400">
+            <a href="#"><i class="bi bi-box-arrow-left"></i> <span class="link-text">Login</span></a>
+        </li>
+        {% endif %}
+    </ul>
+</nav>

@@ -1,0 +1,243 @@
+{% extends "base_dash.html" %}
+{% load humanize %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card shadow-sm border-0 rounded-lg mb-4">
+            <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center py-3">
+                <h5 class="mb-0">Invoice #{{ invoice.invoice_number }}</h5>
+                <div>
+                    {% if invoice.status != 'paid' %}
+                    <a href="{% url 'invoices:invoice-mark-paid' invoice.id %}" class="btn btn-success btn-sm me-2">
+                        <i class="bi bi-check-circle me-1"></i>Mark as Paid
+                    </a>
+                    {% endif %}
+                    <a href="{% url 'invoices:invoice-pdf' invoice.id %}" class="btn btn-primary btn-sm">
+                        <i class="bi bi-download me-1"></i>Download PDF
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h6 class="text-muted">From:</h6>
+                        <h4>{{ invoice.user.get_full_name|default:invoice.user.username }}</h4>
+                        <p class="mb-1">{{ invoice.user.profile.company_name|default:"Your Company" }}</p>
+                        <p class="mb-1">{{ invoice.user.profile.address|default:"123 Business St, City" }}</p>
+                        <p class="mb-1">{{ invoice.user.profile.phone|default:"+1 (123) 456-7890" }}</p>
+                        <p class="mb-0">{{ invoice.user.email }}</p>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <h6 class="text-muted">To:</h6>
+                        <h4>{{ invoice.client.name }}</h4>
+                        <p class="mb-1">{{ invoice.client.address }}</p>
+                        <p class="mb-1">{{ invoice.client.phone }}</p>
+                        <p class="mb-0">{{ invoice.client.email }}</p>
+                    </div>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <p class="mb-1"><strong>Invoice Date:</strong> {{ invoice.date_issued|date:"M d, Y" }}</p>
+                        <p class="mb-0"><strong>Due Date:</strong> {{ invoice.due_date|date:"M d, Y" }}</p>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <p class="mb-0">
+                            <strong>Status:</strong> 
+                            <span class="badge bg-{% if invoice.status == 'paid' %}success{% elif invoice.status == 'sent' %}info{% elif invoice.status == 'overdue' %}danger{% else %}warning{% endif %}">
+                                {{ invoice.get_status_display }}
+                            </span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Description</th>
+                                <th class="text-end">Quantity</th>
+                                <th class="text-end">Unit Price</th>
+                                <th class="text-end">Tax</th>
+                                <th class="text-end">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in invoice.items.all %}
+                            <tr>
+                                <td>{{ item.description }}</td>
+                                <td class="text-end">{{ item.quantity }}</td>
+                                <td class="text-end">${{ item.unit_price|floatformat:2|intcomma }}</td>
+                                <td class="text-end">{{ item.tax }}%</td>
+                                <td class="text-end">${{ item.total|floatformat:2|intcomma }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-lg-6">
+                        {% if invoice.notes %}
+                        <div class="mb-4">
+                            <h6 class="text-muted">Notes</h6>
+                            <p>{{ invoice.notes }}</p>
+                        </div>
+                        {% endif %}
+                        {% if invoice.terms %}
+                        <div class="mb-4">
+                            <h6 class="text-muted">Terms & Conditions</h6>
+                            <p>{{ invoice.terms }}</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <tbody>
+                                    <tr>
+                                        <th class="text-end">Subtotal:</th>
+                                        <td class="text-end">${{ invoice.subtotal|floatformat:2|intcomma }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-end">Tax ({{ invoice.tax }}%):</th>
+                                        <td class="text-end">${{ invoice.tax_amount|floatformat:2|intcomma }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-end">Discount:</th>
+                                        <td class="text-end">${{ invoice.discount|floatformat:2|intcomma }}</td>
+                                    </tr>
+                                    <tr class="table-active">
+                                        <th class="text-end">Total Amount:</th>
+                                        <td class="text-end">${{ invoice.total_amount|floatformat:2|intcomma }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card shadow-sm border-0 rounded-lg mb-4">
+            <div class="card-header bg-white border-0">
+                <h5 class="mb-0">Invoice Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{% url 'invoices:invoice-update' invoice.id %}" class="btn btn-outline-primary">
+                        <i class="bi bi-pencil me-2"></i>Edit Invoice
+                    </a>
+                    <a href="{% url 'invoices:invoice-pdf' invoice.id %}" class="btn btn-outline-secondary">
+                        <i class="bi bi-download me-2"></i>Download PDF
+                    </a>
+                    <a href="#" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#sendModal">
+                        <i class="bi bi-envelope me-2"></i>Send to Client
+                    </a>
+                    {% if invoice.status != 'paid' %}
+                    <a href="{% url 'invoices:invoice-mark-paid' invoice.id %}" class="btn btn-outline-success">
+                        <i class="bi bi-check-circle me-2"></i>Mark as Paid
+                    </a>
+                    {% endif %}
+                    <form id="delete-invoice-form" method="post" action="{% url 'invoices:invoice-delete' invoice.id %}" class="d-grid">
+                        {% csrf_token %}
+                        <button type="button" id="confirm-delete-btn" class="btn btn-outline-danger">
+                            <i class="bi bi-trash me-2"></i>Delete Invoice
+                        </button>
+                    </form>
+                    
+                </div>
+            </div>
+        </div>
+
+        {% if invoice.blockchain_hash %}
+        <div class="card shadow-sm border-0 rounded-lg mb-4">
+            <div class="card-header bg-white border-0">
+                <h5 class="mb-0">Blockchain Verification</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="flex-shrink-0 me-3">
+                        <i class="bi bi-shield-check fs-1 text-success"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h6 class="mb-0">Verified on Blockchain</h6>
+                        <small class="text-muted">Transaction ID: {{ invoice.blockchain_hash|slice:":12" }}...{{ invoice.blockchain_hash|slice:"-12:" }}</small>
+                    </div>
+                </div>
+                <p class="small text-muted mb-0">
+                    This invoice payment has been recorded on the blockchain network and cannot be altered.
+                </p>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="card shadow-sm border-0 rounded-lg">
+            <div class="card-header bg-white border-0">
+                <h5 class="mb-0">Payment Information</h5>
+            </div>
+            <div class="card-body">
+                <h6 class="text-muted">Bank Transfer</h6>
+                <p class="mb-1"><strong>Bank Name:</strong> {{ invoice.user.profile.bank_name|default:"Your Bank" }}</p>
+                <p class="mb-1"><strong>Account Name:</strong> {{ invoice.user.profile.account_name|default:"Your Name" }}</p>
+                <p class="mb-1"><strong>Account Number:</strong> {{ invoice.user.profile.account_number|default:"123456789" }}</p>
+                <p class="mb-3"><strong>SWIFT/BIC:</strong> {{ invoice.user.profile.swift_code|default:"ABCDEFGH" }}</p>
+
+                <h6 class="text-muted">Cryptocurrency</h6>
+                <p class="mb-1"><strong>Bitcoin (BTC):</strong> {{ invoice.user.profile.btc_address|default:"1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa" }}</p>
+                <p class="mb-0"><strong>Ethereum (ETH):</strong> {{ invoice.user.profile.eth_address|default:"0x71C7656EC7ab88b098defB751B7401B5f6d8976F" }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Send Modal -->
+<div class="modal fade" id="sendModal" tabindex="-1" aria-labelledby="sendModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="sendModalLabel">Send Invoice to Client</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" action="">
+                <div class="modal-body">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="recipientEmail" class="form-label">Recipient Email</label>
+                        <input type="email" class="form-control" id="recipientEmail" name="email" value="{{ invoice.client.email }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="message" class="form-label">Additional Message</label>
+                        <textarea class="form-control" id="message" name="message" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Send Invoice</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    document.getElementById('confirm-delete-btn').addEventListener('click', function () {
+        Swal.fire({
+            title: 'Delete Invoice?',
+            text: 'This action cannot be undone!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Yes, delete it!',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('delete-invoice-form').submit();
+            }
+        });
+    });
+    </script>
+    
+{% endblock %}

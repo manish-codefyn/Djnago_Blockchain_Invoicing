@@ -1,0 +1,10 @@
+{% extends "base_dash.html" %}
+{% load humanize %}
+
+{% block title %}Dashboard - InvoicePro{% endblock %}
+
+{% block content %}
+    {% include 'partials/main.html' %}
+    {% include 'partials/table.html' %}
+    {% include 'partials/footer_dash.html' %}
+{% endblock %}

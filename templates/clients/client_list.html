@@ -1,0 +1,195 @@
+{% extends "base_dash.html" %}
+{% load humanize %}
+
+{% block content %}
+<div class="card shadow-sm border-0 rounded-lg">
+    <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center py-3">
+        <h5 class="mb-0">All Clients</h5>
+        <div>
+            <a href="{% url 'clients:client_create' %}" class="btn btn-primary">
+                <i class="bi bi-plus-circle me-2"></i>Add Client
+            </a>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover" id="clientsTable" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Total Invoices</th>
+                        <th>Total Revenue</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for client in clients %}
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="avatar bg-light-primary rounded-circle me-3">
+                                    <i class="bi bi-person fs-4 text-primary"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0">{{ client.name }}</h6>
+                                    <small class="text-muted">{{ client.tax_id|default:"No tax ID" }}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>{{ client.email }}</td>
+                        <td>{{ client.phone|default:"-" }}</td>
+                        <td data-order="{{ client.invoice_count }}">{{ client.invoice_count }}</td>
+                        <td data-order="{{ client.total_revenue }}">₹ {{ client.total_revenue|floatformat:2|intcomma }}</td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                <a href="{% url 'clients:client_update' client.id %}" class="btn btn-sm btn-outline-primary" title="Edit">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a href="{% url 'invoices:invoice-create' %}?client={{ client.id }}" class="btn btn-sm btn-outline-success" title="Create Invoice">
+                                    <i class="bi bi-file-earmark-plus"></i>
+                                </a>
+                                <form method="post" action="{% url 'clients:client_delete' client.id %}" class="d-inline client-delete-form">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                                
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center py-4">No clients found. <a href="{% url 'clients:client_create' %}">Add your first client</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Ensure jQuery is loaded first -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- DataTables CSS -->
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css"/>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.bootstrap5.min.css"/>
+
+<!-- DataTables JS -->
+<script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.bootstrap5.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    $('#clientsTable').DataTable({
+        responsive: true,
+        dom: '<"row mb-3"<"col-md-6"B><"col-md-6"f>>rt<"row mt-3"<"col-md-6"l><"col-md-6"p>>',
+        buttons: [
+            {
+                extend: 'copy',
+                className: 'btn btn-sm btn-outline-secondary text-white',
+                exportOptions: {
+                    columns: [0, 1, 2, 3, 4] // Exclude actions column
+                }
+            },
+            {
+                extend: 'csv',
+                className: 'btn btn-sm btn-outline-secondary text-white',
+                exportOptions: {
+                    columns: [0, 1, 2, 3, 4]
+                }
+            },
+            {
+                extend: 'excel',
+                className: 'btn btn-sm btn-outline-secondary text-white',
+                exportOptions: {
+                    columns: [0, 1, 2, 3, 4]
+                }
+            },
+            {
+                extend: 'pdf',
+                className: 'btn btn-sm btn-outline-secondary text-white',
+                exportOptions: {
+                    columns: [0, 1, 2, 3, 4]
+                }
+            },
+            {
+                extend: 'print',
+                className: 'btn btn-sm btn-outline-secondary text-white',
+                exportOptions: {
+                    columns: [0, 1, 2, 3, 4]
+                }
+            }
+        ],
+        language: {
+            search: "_INPUT_",
+            searchPlaceholder: "Search clients...",
+            lengthMenu: "Show _MENU_ clients per page",
+            zeroRecords: "No matching clients found",
+            info: "Showing _START_ to _END_ of _TOTAL_ clients",
+            infoEmpty: "No clients available",
+            infoFiltered: "(filtered from _MAX_ total clients)"
+        },
+        columnDefs: [
+            { 
+                orderable: false, 
+                targets: [5], // Actions column
+                searchable: false
+            },
+            {
+                type: 'num',
+                targets: [3, 4] // Numeric columns (invoice count and revenue)
+            },
+            {
+                responsivePriority: 1,
+                targets: 0 // Name column is most important for responsive
+            },
+            {
+                responsivePriority: 2,
+                targets: 5 // Actions column next important
+            }
+        ],
+        order: [[0, 'asc']], // Default sort by client name
+        pageLength: 25
+    });
+});
+
+// 
+
+document.addEventListener('DOMContentLoaded', function () {
+    const deleteForms = document.querySelectorAll('.client-delete-form');
+
+    deleteForms.forEach(form => {
+        form.addEventListener('submit', function (e) {
+            e.preventDefault(); // Stop normal form submit
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'Do you really want to delete this client?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit(); // Submit the form if confirmed
+                }
+            });
+        });
+    });
+});
+</script>
+
+
+{% endblock %}

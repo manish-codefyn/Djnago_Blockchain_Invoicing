@@ -1,0 +1,26 @@
+{% extends "notifications/email/base.html" %}
+
+{% block title %}Payment Received - {{ invoice.invoice_number }}{% endblock %}
+
+{% block header %}Payment Received{% endblock %}
+
+{% block content %}
+<p>Hello {{ recipient.first_name }},</p>
+
+<p>This is to confirm that we've received payment for invoice <strong>{{ invoice.invoice_number }}</strong>:</p>
+
+<ul>
+    <li><strong>Amount:</strong> {{ payment.amount }} {{ invoice.currency }}</li>
+    <li><strong>Date:</strong> {{ payment.payment_date|date:"F j, Y" }}</li>
+    <li><strong>Method:</strong> {{ payment.get_payment_method_display }}</li>
+    {% if payment.transaction_id %}
+    <li><strong>Transaction ID:</strong> {{ payment.transaction_id }}</li>
+    {% endif %}
+</ul>
+
+<p>You can view the payment details here:</p>
+
+<a href="{{ payment_url }}" class="button">View Payment</a>
+
+<p>Thank you for your prompt payment!</p>
+{% endblock %}

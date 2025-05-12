@@ -1,0 +1,112 @@
+{% extends "base_dash.html" %}
+{% load crispy_forms_tags static %}
+{% block title %}Terms of Service - {{ site_name }}{% endblock %}
+
+{% block content %}
+<section class="terms-section py-8 py-lg-10">
+    <div class="container">
+        <div class="text-center mb-6">
+            <h1 class="terms-title">Terms of Service</h1>
+            <p class="terms-subtitle">Last Updated: {% now "F j, Y" %}</p>
+        </div>
+
+        <div class="terms-content">
+            <div class="text-center mb-5">
+                <img src="{{ logo_url }}" alt="{{ site_name }} Logo" class="mb-4" style="height: 50px;">
+                <h2 class="mb-3">CodeFyn Software Solutions</h2>
+                <p class="text-muted">Siliguri, West Bengal, India</p>
+            </div>
+
+            <h5>1. Acceptance of Terms</h5>
+            <p>Welcome to {{ site_name }} ("Service"), operated by CodeFyn Software Solutions ("we," "us," or "our"). By accessing or using our website and services, you agree to be bound by these Terms of Service ("Terms"). If you disagree with any part of the terms, you may not access the Service.</p>
+
+            <h5>2. Description of Service</h5>
+            <p>{{ site_name }} provides an email marketing platform that enables users to create, send, and manage email campaigns. Our services include but are not limited to email template design, contact management, campaign analytics, and automation tools.</p>
+
+            <h5>3. Account Registration</h5>
+            <p>To use our Service, you must:</p>
+            <ul>
+                <li>Provide accurate and complete registration information</li>
+                <li>Maintain the security of your password and accept all risks of unauthorized access</li>
+                <li>Be at least 18 years of age or have parental/guardian consent</li>
+                <li>Not create accounts for the purpose of violating these Terms</li>
+            </ul>
+
+            <h5>4. User Responsibilities</h5>
+            <p>You agree to:</p>
+            <ul>
+                <li>Comply with all applicable laws, including anti-spam regulations (CAN-SPAM, GDPR, etc.)</li>
+                <li>Only send emails to recipients who have given explicit consent</li>
+                <li>Not use our Service to send unlawful, abusive, or fraudulent content</li>
+                <li>Not reverse engineer, hack, or interfere with our Service</li>
+                <li>Not use purchased, rented, or third-party email lists</li>
+            </ul>
+
+            <h5>5. Prohibited Content</h5>
+            <p>You may not use our Service to send content that:</p>
+            <ul>
+                <li>Contains illegal or harmful material</li>
+                <li>Violates intellectual property rights</li>
+                <li>Contains viruses or malicious code</li>
+                <li>Promotes hate speech, discrimination, or harassment</li>
+                <li>Contains adult or pornographic material</li>
+                <li>Promotes pyramid schemes or multi-level marketing</li>
+            </ul>
+
+            <h5>6. Payment Terms</h5>
+            <p>For paid plans:</p>
+            <ul>
+                <li>Fees are billed in advance on a recurring basis</li>
+                <li>All fees are non-refundable except as required by law</li>
+                <li>We may change prices with 30 days notice</li>
+                <li>Accounts not paid on time may be suspended</li>
+            </ul>
+
+            <h5>7. Intellectual Property</h5>
+            <p>All intellectual property rights in the Service remain our property or that of our licensors. You retain ownership of your content but grant us a worldwide license to use, reproduce, and display such content solely to provide the Service.</p>
+
+            <h5>8. Termination</h5>
+            <p>We may terminate or suspend your account immediately, without prior notice, for any reason, including violation of these Terms. Upon termination, your right to use the Service will immediately cease.</p>
+
+            <h5>9. Limitation of Liability</h5>
+            <p>To the maximum extent permitted by law, we shall not be liable for any indirect, incidental, special, consequential or punitive damages, or any loss of profits or revenues, whether incurred directly or indirectly.</p>
+
+            <h5>10. Disclaimer of Warranties</h5>
+            <p>The Service is provided "as is" without warranty of any kind. We do not guarantee that the Service will be uninterrupted, timely, secure, or error-free.</p>
+
+            <h5>11. Changes to Terms</h5>
+            <p>We reserve the right to modify these Terms at any time. We will provide notice of material changes through our website or via email. Your continued use of the Service constitutes acceptance of the modified Terms.</p>
+
+            <h5>12. Governing Law</h5>
+            <p>These Terms shall be governed by and construed in accordance with the laws of India, without regard to its conflict of law provisions.</p>
+
+            <h5>13. Contact Information</h5>
+            <div class="contact-info bg-light p-4 rounded">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <h6><i class="bi bi-envelope me-2"></i> Email</h6>
+                        <p><a href="mailto:{{ email }}">{{ email }}</a></p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <h6><i class="bi bi-telephone me-2"></i> Phone</h6>
+                        <p><a href="tel:{{ mobile }}">{{ mobile }}</a></p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <h6><i class="bi bi-geo-alt me-2"></i> Address</h6>
+                        <p>{{ address }}</p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <h6><i class="bi bi-clock me-2"></i> Business Hours</h6>
+                        <p>Monday - Friday: 9:00 AM - 6:00 PM IST</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-5">
+                <p class="text-muted">Thank you for choosing {{ site_name }} by CodeFyn Software Solutions.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

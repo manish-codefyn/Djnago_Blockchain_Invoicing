@@ -1,0 +1,186 @@
+{% extends "base_dash.html" %}
+{% load crispy_forms_tags static %}
+
+{% block title %} SMTP - {{site_name}}{% endblock %}
+{% block extra_css %}
+
+{% endblock %}
+
+{% block content %}
+<div class="smtp-settings-container">
+    <div class="smtp-settings-card shadow-lg p-4 rounded-4">
+        <div class="smtp-settings-header">
+            <h2 class="smtp-settings-title">
+                <i class="bi bi-envelope-fill"></i>
+                SMTP Configuration
+            </h2>
+            <p class="smtp-settings-subtitle">Configure your email server settings for outgoing messages</p>
+        </div>
+        
+        <div class="smtp-settings-body">
+            <form method="post" enctype="multipart/form-data" class="settings-form">
+                {% csrf_token %}
+                
+                <div class="smtp-section">
+                    <h3 class="section-title">
+                        <i class="bi bi-server"></i>
+                        Server Configuration
+                    </h3>
+                    <div class="row">
+                        <div class="col-md-6">
+                            {{ form.email_host|as_crispy_field }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form.email_port|as_crispy_field }}
+                        </div>
+                    </div>
+                    {{ form.email_use_tls|as_crispy_field }}
+                </div>
+                
+                <div class="smtp-section">
+                    <h3 class="section-title">
+                        <i class="bi bi-person-badge-fill"></i>
+                        Authentication
+                    </h3>
+                    <div class="row">
+                        <div class="col-md-6">
+                            {{ form.email_host_user|as_crispy_field }}
+                        </div>
+                        <div class="col-md-6 password-toggle">
+                            {{ form.email_host_password|as_crispy_field }}
+                            <i class="bi bi-eye-fill toggle-icon" id="togglePassword"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="smtp-section">
+                    <h3 class="section-title">
+                        <i class="bi bi-envelope-paper-fill"></i>
+                        Email Settings
+                    </h3>
+                    {{ form.default_from_email|as_crispy_field }}
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-info btn-test" id="testConnectionBtn">
+                        <i class="bi bi-plug"></i> Test Connection
+                    </button>
+                    <button type="submit" class="btn btn-primary btn-save">
+                        <i class="bi bi-save"></i> Save Settings
+                    </button>
+                    <a href="{% url 'invoices:dashboard' %}" class="btn btn-outline-secondary">
+                        <i class="bi bi-x-circle"></i> Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Password toggle functionality
+    const togglePassword = document.querySelector('#togglePassword');
+    const passwordField = document.querySelector('#id_email_host_password');
+    
+    if (togglePassword && passwordField) {
+        togglePassword.addEventListener('click', function() {
+            const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordField.setAttribute('type', type);
+            this.classList.toggle('bi-eye-fill');
+            this.classList.toggle('bi-eye-slash-fill');
+        });
+    }
+    
+    // Add loading state to form submission
+    const form = document.querySelector('.settings-form');
+    if (form) {
+        form.addEventListener('submit', function() {
+            const saveBtn = document.querySelector('.btn-save');
+            if (saveBtn) {
+                saveBtn.innerHTML = '<i class="bi bi-arrow-repeat spinner"></i> Saving...';
+                saveBtn.disabled = true;
+            }
+        });
+    }
+    
+    // Test connection button functionality
+    const testBtn = document.querySelector('#testConnectionBtn');
+    if (testBtn) {
+        testBtn.addEventListener('click', function() {
+            // Get form data
+            const formData = new FormData(document.querySelector('.settings-form'));
+            const data = {
+                'email_host': formData.get('email_host'),
+                'email_port': formData.get('email_port'),
+                'email_use_tls': formData.get('email_use_tls') === 'on',
+                'email_host_user': formData.get('email_host_user'),
+                'email_host_password': formData.get('email_host_password')
+            };
+            
+            // Show loading state
+            const originalHtml = testBtn.innerHTML;
+            testBtn.innerHTML = '<i class="bi bi-arrow-repeat spinner"></i> Testing...';
+            testBtn.disabled = true;
+            
+            // Send AJAX request
+            fetch("{% url 'core:test_smtp_connection' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert('success', 'SMTP Connection Successful', data.message);
+                } else {
+                    showAlert('danger', 'SMTP Connection Failed', data.message);
+                }
+            })
+            .catch(error => {
+                showAlert('danger', 'Error', 'An error occurred while testing connection');
+                console.error('Error:', error);
+            })
+            .finally(() => {
+                // Restore button state
+                testBtn.innerHTML = originalHtml;
+                testBtn.disabled = false;
+            });
+        });
+    }
+    
+    function showAlert(type, title, message) {
+        // Remove any existing alerts
+        const existingAlert = document.querySelector('.smtp-alert');
+        if (existingAlert) {
+            existingAlert.remove();
+        }
+        
+        // Create alert element
+        const alert = document.createElement('div');
+        alert.className = `alert alert-${type} alert-dismissible fade show smtp-alert`;
+        alert.innerHTML = `
+            <strong>${title}</strong> ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        `;
+        
+        // Insert alert
+        const cardBody = document.querySelector('.smtp-settings-body');
+        if (cardBody) {
+            cardBody.insertBefore(alert, cardBody.firstChild);
+            
+            // Auto-dismiss after 5 seconds
+            setTimeout(() => {
+                const bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            }, 5000);
+        }
+    }
+});
+</script>
+{% endblock %}

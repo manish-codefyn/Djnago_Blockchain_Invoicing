@@ -1,0 +1,67 @@
+<div class="container-fluid px-0">
+    <div class="row g-4 mb-4">
+        <!-- Total Revenue -->
+        <div class="col-lg-3 col-md-6" data-aos="fade-up">
+            <div class="card stat-card h-100 border-0 shadow-sm">
+                <div class="card-body d-flex flex-column align-items-start">
+                    <div class="card-icon bg-primary-soft mb-3 rounded-circle p-3">
+                        <i class="bi bi-cash-coin text-primary fs-4"></i>
+                    </div>
+                    <h5 class="card-title text-muted mb-2">Total Revenue</h5>
+                    <p class="display-6 fw-bold mb-0 text-dark">₹{{ total_revenue|floatformat:2 }}</p>
+                    <p class="text-success text-small mt-2 mb-0">
+                        <i class="bi bi-arrow-up-short"></i> Updated in real time
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Invoices Paid -->
+        <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="100">
+            <div class="card stat-card h-100 border-0 shadow-sm">
+                <div class="card-body d-flex flex-column align-items-start">
+                    <div class="card-icon bg-success-soft mb-3 rounded-circle p-3">
+                        <i class="bi bi-file-earmark-check-fill text-success fs-4"></i>
+                    </div>
+                    <h5 class="card-title text-muted mb-2">Invoices Paid</h5>
+                    <p class="display-6 fw-bold mb-0 text-dark">{{ invoices_paid }}</p>
+                    <p class="text-muted text-small mt-2 mb-0">
+                        <span class="text-success">Live</span> count
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pending Invoices -->
+        <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
+            <div class="card stat-card h-100 border-0 shadow-sm">
+                <div class="card-body d-flex flex-column align-items-start">
+                    <div class="card-icon bg-warning-soft mb-3 rounded-circle p-3">
+                        <i class="bi bi-hourglass-split text-warning fs-4"></i>
+                    </div>
+                    <h5 class="card-title text-muted mb-2">Pending Invoices</h5>
+                    <p class="display-6 fw-bold mb-0 text-dark">{{ pending_invoices }}</p>
+                    <p class="text-warning text-small mt-2 mb-0">
+                        <i class="bi bi-exclamation-triangle-fill"></i> ₹{{ pending_amount|floatformat:2 }} outstanding
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Overdue Invoices -->
+        <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="300">
+            <div class="card stat-card h-100 border-0 shadow-sm">
+                <div class="card-body d-flex flex-column align-items-start">
+                    <div class="card-icon bg-danger-soft mb-3 rounded-circle p-3">
+                        <i class="bi bi-calendar-x-fill text-danger fs-4"></i>
+                    </div>
+                    <h5 class="card-title text-muted mb-2">Overdue Invoices</h5>
+                    <p class="display-6 fw-bold mb-0 text-dark">{{ overdue_invoices }}</p>
+                    <p class="text-danger text-small mt-2 mb-0">
+                        <i class="bi bi-arrow-down-short"></i> ₹{{ overdue_critical_amount|floatformat:2 }} critical
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

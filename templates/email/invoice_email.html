@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Invoice {{ invoice.invoice_number }}</title>
+</head>
+<body>
+    <h2>Hello {{ invoice.client.name }},</h2>
+    <p>Please find your invoice below:</p>
+
+    <ul>
+        <li><strong>Invoice Number:</strong> {{ invoice.invoice_number }}</li>
+        <li><strong>Date Issued:</strong> {{ invoice.date_issued }}</li>
+        <li><strong>Due Date:</strong> {{ invoice.due_date }}</li>
+        <li><strong>Total Amount:</strong> {{ invoice.formatted_total }}</li>
+    </ul>
+
+    <p>Thank you for your business!</p>
+</body>
+</html>

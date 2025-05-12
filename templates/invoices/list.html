@@ -1,0 +1,203 @@
+{% extends "base_dash.html" %}
+{% load humanize %}
+{% block content %}
+<div class="card shadow-sm border-0 rounded-lg">
+    <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center py-3">
+        <h5 class="mb-0">All Invoices</h5>
+        <div>
+            <a href="{% url 'invoices:invoice-create' %}" class="btn btn-primary">
+                <i class="bi bi-plus-circle me-2"></i>Create Invoice
+            </a>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover" id="invoicesTable" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>Invoice #</th>
+                        <th>Client</th>
+                        <th>Date Issued</th>
+                        <th>Due Date</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for invoice in invoices %}
+                    <tr>
+                        <td>{{ invoice.invoice_number }}</td>
+                        <td>{{ invoice.client.name }}</td>
+                        <td data-order="{{ invoice.date_issued|date:'U' }}">{{ invoice.date_issued|date:"M d, Y" }}</td>
+                        <td data-order="{{ invoice.due_date|date:'U' }}" class="{% if invoice.is_overdue %}text-danger{% endif %}">
+                            {{ invoice.due_date|date:"M d, Y" }}
+                        </td>
+                        <td data-order="{{ invoice.total_amount }}">{{ invoice.total_amount|floatformat:2|intcomma }}</td>
+                        <td data-order="{{ invoice.status }}">
+                            <span class="badge bg-{% if invoice.status == 'paid' %}success{% elif invoice.status == 'sent' %}info{% elif invoice.status == 'overdue' %}danger{% else %}warning{% endif %}">
+                                {{ invoice.get_status_display }}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                <a href="{% url 'invoices:invoice-detail' invoice.id %}" class="btn btn-sm btn-outline-primary" title="View">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a href="{% url 'invoices:invoice-pdf' invoice.id %}" class="btn btn-sm btn-outline-secondary" title="Download PDF">
+                                    <i class="bi bi-download"></i>
+                                </a>
+                                <a href="{% url 'invoices:invoice-update' invoice.id %}" class="btn btn-sm btn-outline-info" title="Edit">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a href="{% url 'invoices:invoice-send' invoice.id %}" class="btn btn-sm btn-outline-success" title="Send Invoice">
+                                    <i class="bi bi-file-earmark-plus"></i>
+                                </a>
+                                <a href="{% url 'invoices:invoice-payment-create' invoice.id %}" class="btn btn-outline-warning btn-sm" title="Add payments">
+                                    <i class="bi bi-cash-stack"></i>
+                                  
+                                </a>
+                                <form method="post" action="{% url 'invoices:invoice-delete' invoice.id %}" class="d-inline invoice-delete-form">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                                
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center py-4">No invoices found. <a href="{% url 'invoices:invoice-create' %}">Create your first invoice</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<!-- Ensure jQuery is loaded first -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- DataTables CSS -->
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css"/>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.bootstrap5.min.css"/>
+
+<!-- DataTables JS -->
+<script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.bootstrap5.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
+
+
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+{% if messages %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        {% for message in messages %}
+            Swal.fire({
+                icon: '{% if "success" in message.tags %}success{% elif "error" in message.tags %}error{% else %}info{% endif %}',
+                title: '{{ message|escapejs }}',
+                showConfirmButton: false,
+                timer: 2000,
+                toast: true,
+                position: 'top-end'
+            });
+        {% endfor %}
+    });
+</script>
+{% endif %}
+
+
+<script>
+$(document).ready(function() {
+    $('#invoicesTable').DataTable({
+        responsive: true,
+        dom: '<"row mb-3"<"col-md-6"B><"col-md-6"f>>rt<"row mt-3"<"col-md-6"l><"col-md-6"p>>',
+        buttons: [
+            {
+                extend: 'copy',
+                className: 'btn btn-sm btn-outline-secondary text-white'
+            },
+            {
+                extend: 'csv',
+                className: 'btn btn-sm btn-outline-secondary text-white'
+            },
+            {
+                extend: 'excel',
+                className: 'btn btn-sm btn-outline-secondary text-white'
+            },
+            {
+                extend: 'pdf',
+                className: 'btn btn-sm btn-outline-secondary text-white'
+            },
+            {
+                extend: 'print',
+                className: 'btn btn-sm btn-outline-secondary text-white'
+            }
+        ],
+        language: {
+            search: "_INPUT_",
+            searchPlaceholder: "Search invoices...",
+            lengthMenu: "Show _MENU_ invoices per page",
+            zeroRecords: "No matching invoices found",
+            info: "Showing _START_ to _END_ of _TOTAL_ invoices",
+            infoEmpty: "No invoices available",
+            infoFiltered: "(filtered from _MAX_ total invoices)"
+        },
+        columnDefs: [
+            { 
+                orderable: false, 
+                targets: [6] // Actions column
+            },
+            {
+                type: 'date',
+                targets: [2, 3] // Date columns
+            },
+            {
+                type: 'num',
+                targets: [4] // Amount column
+            }
+        ],
+        order: [[2, 'desc']] // Default sorting
+    });
+});
+
+// 
+
+document.addEventListener('DOMContentLoaded', function () {
+    const deleteForms = document.querySelectorAll('.invoice-delete-form');
+
+    deleteForms.forEach(form => {
+        form.addEventListener('submit', function (e) {
+            e.preventDefault(); // Prevent form from submitting
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'This action cannot be undone!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit(); // Proceed to delete
+                }
+            });
+        });
+    });
+});
+</script>
+
+{% endblock %}

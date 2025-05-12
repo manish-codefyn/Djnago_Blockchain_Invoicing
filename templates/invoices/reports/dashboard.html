@@ -1,0 +1,126 @@
+{% extends "base_dash.html" %}
+{% load static %}
+{% load sum_tags %}
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css">
+<style>
+    .dataTables_wrapper .dataTables_length,
+    .dataTables_wrapper .dataTables_filter {
+        margin-bottom: 1rem;
+    }
+    .dataTables_wrapper .dataTables_info {
+        padding-top: 1rem;
+    }
+    .dataTables_wrapper .dataTables_paginate {
+        padding-top: 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5>Monthly Summary</h5>
+                <a href="{% url 'invoices:reports_monthly' %}" class="btn btn-sm btn-outline-primary">View Full Report</a>
+            </div>
+            <div class="card-body">
+                <table id="monthlyTable"  class="table table-sm table-hover w-100">
+                    <thead>
+                        <tr>
+                            <th>Month</th>
+                            <th class="text-end">Invoices</th>
+                            <th class="text-end">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in monthly_data|slice:":5" %}
+                        <tr>
+                            <td>{{ item.month|date:"F Y" }}</td>
+                            <td class="text-end">{{ item.total_invoices }}</td>
+                            <td class="text-end">₹{{ item.total_amount|default:0|floatformat:2 }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                   
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5>Top Clients</h5>
+                <a href="{% url 'invoices:reports_clients' %}" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+            <div class="card-body">
+                <table id="clientsTable" class="table table-sm table-hover w-100">
+                    <thead>
+                        <tr>
+                            <th>Client</th>
+                            <th class="text-end">Total</th>
+                            <th class="text-end">Outstanding</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for client in client_data %}
+                        <tr>
+                            <td>{{ client.client_name }}</td>
+                            <td class="text-end">₹{{ client.total_amount|default:0|floatformat:2 }}</td>
+                            <td class="text-end">₹{{ client.total_outstanding|default:0|floatformat:2 }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                  
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        // Initialize Monthly Summary DataTable
+        $('#monthlyTable').DataTable({
+            "paging": false,
+            "searching": false,
+            "info": false,
+            "ordering": true,
+            "order": [[0, "desc"]],
+            "columnDefs": [
+                { "orderable": true, "targets": [0, 1, 2] },
+                { "className": "dt-body-right", "targets": [1, 2] }
+            ],
+            "dom": '<"top"i>rt<"bottom"flp><"clear">',
+            "language": {
+                "emptyTable": "No monthly data available"
+            }
+        });
+
+        // Initialize Top Clients DataTable
+        $('#clientsTable').DataTable({
+            "paging": false,
+            "searching": false,
+            "info": false,
+            "ordering": true,
+            "order": [[1, "desc"]],  // Sort by Total amount descending by default
+            "columnDefs": [
+                { "orderable": true, "targets": [0, 1, 2] },
+                { "className": "dt-body-right", "targets": [1, 2] }
+            ],
+            "dom": '<"top"i>rt<"bottom"flp><"clear">',
+            "language": {
+                "emptyTable": "No client data available"
+            }
+        });
+    });
+</script>
+{% endblock %}

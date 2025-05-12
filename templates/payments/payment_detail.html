@@ -1,0 +1,115 @@
+{% extends 'base_dash.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h3>Payment Details</h3>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <strong>Payment Date:</strong>
+                        <p>{{ payment.payment_date|date:"M d, Y" }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Amount:</strong>
+                        <p>{{ payment.amount }}</p>
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <strong>Payment Method:</strong>
+                        <p>{{ payment.get_payment_method_display }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Transaction ID:</strong>
+                        <p>{{ payment.transaction_id|default:"-" }}</p>
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <strong>Invoice:</strong>
+                        <p>
+                            <a href="{% url 'invoices:invoice-detail' payment.invoice.id %}">
+                                #{{ payment.invoice.invoice_number }}
+                            </a>
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Status:</strong>
+                        <p>
+                            {% if payment.is_verified %}
+                                <span class="badge bg-success">Verified</span>
+                            {% else %}
+                                <span class="badge bg-warning">Pending Verification</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <strong>Notes:</strong>
+                    <p>{{ payment.notes|default:"No notes provided"|linebreaks }}</p>
+                </div>
+                
+                <div class="mb-3">
+                    <strong>Created By:</strong>
+                    <p>{{ payment.created_by.get_full_name }} on {{ payment.created_at|date:"M d, Y H:i" }}</p>
+                </div>
+                
+                {% if payment.verification_hash %}
+                <div class="alert alert-info">
+                    <strong>Verification Hash:</strong>
+                    <code>{{ payment.verification_hash }}</code>
+                </div>
+                {% endif %}
+            </div>
+            <div class="card-footer">
+                <a href="{% url 'invoices:payment-list' %}" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Back to List
+                </a>
+                
+                {% if request.user.is_superuser and not payment.is_verified %}
+                <a href="{% url 'invoices:verify-payment' payment.id %}" 
+                   class="btn btn-success float-end">
+                    <i class="fas fa-check-circle"></i> Verify Payment
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h3>Invoice Summary</h3>
+            </div>
+            <div class="card-body">
+                <p><strong>Client:</strong> {{ payment.invoice.client.name }}</p>
+                <p><strong>Total Amount:</strong> {{ payment.invoice.formatted_total }}</p>
+                <p><strong>Total Paid:</strong> {{ payment.invoice.total_paid }}</p>
+                <p><strong>Balance Due:</strong> {{ payment.invoice.balance_due }}</p>
+                <p><strong>Status:</strong> {{ payment.invoice.get_status_display }}</p>
+                
+                <hr>
+                
+                <h5>Payment History</h5>
+                <ul class="list-group">
+                    {% for pmt in payment.invoice.payments.all %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ pmt.payment_date|date:"M d" }} - {{ pmt.amount }}
+                        {% if pmt.id == payment.id %}
+                        <span class="badge bg-primary">Current</span>
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

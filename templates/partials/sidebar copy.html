@@ -1,0 +1,174 @@
+<nav id="sidebar" class="sidebar navbar navbar-dark bg-dark">
+    <div class="d-flex flex-column w-100 align-items-start px-3 pt-3">
+        <!-- Sidebar Brand -->
+        <a class="sidebar-brand d-flex align-items-center mb-3" href="{% url 'dashboard' %}">
+            <i class="bi bi-receipt-cutoff me-2"></i>
+            <span class="fw-bold fs-5">InvoicePro</span>
+        </a>
+
+        <!-- Divider -->
+        <hr class="w-100">
+
+        <!-- Nav Items -->
+        <ul class="nav flex-column w-100">
+            <li class="nav-item">
+                <a class="nav-link d-flex align-items-center {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" href="{% url 'dashboard' %}">
+                    <i class="bi bi-speedometer2 me-2"></i>
+                    Dashboard
+                </a>
+            </li>
+
+            <hr class="w-100">
+
+            <div class="text-muted text-uppercase small">Invoices</div>
+
+            <li class="nav-item">
+                <a class="nav-link d-flex align-items-center {% if request.resolver_match.url_name == 'invoice-list' %}active{% endif %}" href="{% url 'invoice-list' %}">
+                    <i class="bi bi-file-earmark-text me-2"></i>
+                    All Invoices
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link d-flex align-items-center {% if request.resolver_match.url_name == 'invoice-create' %}active{% endif %}" href="{% url 'invoice-create' %}">
+                    <i class="bi bi-plus-circle me-2"></i>
+                    Create Invoice
+                </a>
+            </li>
+
+            <hr class="w-100">
+
+            <div class="text-muted text-uppercase small">Clients</div>
+
+            <li class="nav-item">
+                <a class="nav-link d-flex align-items-center {% if request.resolver_match.url_name == 'client-list' %}active{% endif %}" href="{% url 'client-list' %}">
+                    <i class="bi bi-people me-2"></i>
+                    All Clients
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link d-flex align-items-center {% if request.resolver_match.url_name == 'client-create' %}active{% endif %}" href="{% url 'client-create' %}">
+                    <i class="bi bi-person-plus me-2"></i>
+                    Add Client
+                </a>
+            </li>
+
+            <hr class="w-100">
+
+            <div class="text-muted text-uppercase small">Reports</div>
+
+            <li class="nav-item">
+                <a class="nav-link d-flex align-items-center" href="#">
+                    <i class="bi bi-bar-chart me-2"></i>
+                    Revenue
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link d-flex align-items-center" href="#">
+                    <i class="bi bi-clock-history me-2"></i>
+                    Overdue
+                </a>
+            </li>
+
+            <hr class="w-100">
+
+            <!-- Sidebar Toggle -->
+            <div class="text-start">
+                <button class="btn btn-outline-light rounded-circle border-0" id="sidebarToggle">
+                    <i class="bi bi-chevron-left"></i>
+                </button>
+            </div>
+        </ul>
+    </div>
+</nav>
+
+
+
+<script>
+  // Sidebar Toggle Functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const sidebar = document.getElementById('sidebar');
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebarToggleTop = document.getElementById('sidebarToggleTop');
+    
+    // Check localStorage for saved state
+    const isToggled = localStorage.getItem('sidebarToggled') === 'true';
+    
+    // Initialize sidebar state
+    if (isToggled) {
+        sidebar.classList.add('toggled');
+    }
+    
+    // Toggle sidebar function
+    function toggleSidebar() {
+        sidebar.classList.toggle('toggled');
+        
+        // Save state to localStorage
+        localStorage.setItem('sidebarToggled', sidebar.classList.contains('toggled'));
+        
+        // On mobile, add overlay when sidebar is open
+        if (window.innerWidth <= 768) {
+            if (sidebar.classList.contains('toggled')) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = '';
+            }
+        }
+    }
+    
+    // Add event listeners to both toggle buttons
+    if (sidebarToggle) {
+        sidebarToggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            toggleSidebar();
+        });
+    }
+    
+    if (sidebarToggleTop) {
+        sidebarToggleTop.addEventListener('click', function(e) {
+            e.preventDefault();
+            toggleSidebar();
+        });
+    }
+    
+    // Close sidebar when clicking outside on mobile
+    document.addEventListener('click', function(e) {
+        if (window.innerWidth <= 768 && sidebar.classList.contains('toggled')) {
+            const isClickInsideSidebar = sidebar.contains(e.target);
+            const isClickOnToggle = e.target === sidebarToggleTop || 
+                                  e.target.closest('#sidebarToggleTop');
+            
+            if (!isClickInsideSidebar && !isClickOnToggle) {
+                toggleSidebar();
+            }
+        }
+    });
+    
+    // Update toggle icon based on state
+    function updateToggleIcon() {
+        if (sidebarToggle) {
+            const icon = sidebarToggle.querySelector('i');
+            if (sidebar.classList.contains('toggled')) {
+                icon.classList.remove('bi-chevron-left');
+                icon.classList.add('bi-chevron-right');
+            } else {
+                icon.classList.remove('bi-chevron-right');
+                icon.classList.add('bi-chevron-left');
+            }
+        }
+    }
+    
+    // Initial icon update
+    updateToggleIcon();
+    
+    // Watch for sidebar changes to update icon
+    const observer = new MutationObserver(updateToggleIcon);
+    observer.observe(sidebar, { attributes: true });
+    
+    // Adjust layout when window is resized
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 768 && !sidebar.classList.contains('toggled')) {
+            document.body.style.overflow = '';
+        }
+    });
+});
+</script>

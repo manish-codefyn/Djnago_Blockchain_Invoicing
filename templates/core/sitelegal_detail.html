@@ -1,0 +1,56 @@
+{% extends "base_dash.html" %}
+{% load crispy_forms_tags static %}
+{% block content %}
+<div class="py-5">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h2 class="mb-0">Legal Information</h2>
+        </div>
+        
+        <div class="card-body">
+            <!-- Terms of Service Section -->
+            <div class="mb-5">
+                <h3 class="border-bottom pb-2">Terms of Service</h3>
+                <div class="quill-content">
+                    {{ legal_content.terms_of_service|safe }}
+                </div>
+                <small class="text-muted d-block mt-2">
+                    Last updated: {{ legal_content.updated_at|date:"F j, Y" }}
+                </small>
+            </div>
+            
+            <!-- Privacy Policy Section -->
+            <div class="mb-3">
+                <h3 class="border-bottom pb-2">Privacy Policy</h3>
+                <div class="quill-content">
+                    {{ legal_content.privacy_policy|safe }}
+                </div>
+                <small class="text-muted d-block mt-2">
+                    Last updated: {{ legal_content.updated_at|date:"F j, Y" }}
+                </small>
+            </div>
+        </div>
+        
+        {% if user.is_staff %}
+        <div class="card-footer bg-light">
+            <a href="{% url 'core:site_legal_update' %}" class="btn btn-primary">
+                <i class="bi bi-pencil-square"></i> Edit Legal Content
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    .quill-content {
+        line-height: 1.6;
+    }
+    .quill-content p {
+        margin-bottom: 1rem;
+    }
+    .quill-content ul, .quill-content ol {
+        padding-left: 1.5rem;
+        margin-bottom: 1rem;
+    }
+</style>
+{% endblock %}

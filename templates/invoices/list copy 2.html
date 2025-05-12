@@ -1,0 +1,57 @@
+{% extends 'base_dash.html' %}
+
+{% block content %}
+<h1>Invoices</h1>
+
+<div class="filters">
+    <form method="get">
+        <select name="status">
+            <option value="">All Statuses</option>
+            {% for value, label in status_choices %}
+            <option value="{{ value }}" {% if value == current_status %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Filter</button>
+    </form>
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th>Number</th>
+            <th>Client</th>
+            <th>Date</th>
+            <th>Due Date</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for invoice in invoices %}
+        <tr>
+            <td>{{ invoice.invoice_number }}</td>
+            <td>{{ invoice.client.name }}</td>
+            <td>{{ invoice.date_issued }}</td>
+            <td>{{ invoice.due_date }}</td>
+            <td>{{ invoice.formatted_total }}</td>
+            <td>{{ invoice.get_status_display }}</td>
+            <td>
+                <a href="{% url 'invoices:invoice-detail' invoice.pk %}">View</a>
+                {% if perms.invoices.change_invoice %}
+                <a href="{% url 'invoices:invoice-update' invoice.pk %}">Edit</a>
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="7">No invoices found.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% if perms.invoices.add_invoice %}
+<a href="{% url 'invoices:invoice-create' %}" class="btn">Create Invoice</a>
+{% endif %}
+{% endblock %}
