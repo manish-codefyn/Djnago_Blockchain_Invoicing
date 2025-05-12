@@ -23,11 +23,18 @@ A secure, modern, and professional invoicing system powered by Django and integr
 ## 📂 Project Structure
 
 Blockchain-Invoicing/
-├── invoices/ # Main app
 ├── blockchain/ # Blockchain logic
-├── templates/ # HTML templates
-├── static/ # Static files (CSS, JS, images)
+├── clients/ # clients app
+├── Config/ # Settings app
+├── core/ # core app
+├── invoices/ # Main app
+├── logs/ # Main app
 ├── media/ # Uploaded media
+├── notifications/ # notifications app
+├── static/ # Static files (CSS, JS, images)
+├── templates/ # HTML templates
+├── templatetags/ # HTML templates
+├── users/ # users app
 ├── utils/ # Reusable helpers (PDF, email, etc.)
 ├── manage.py
 ├── requirements.txt
